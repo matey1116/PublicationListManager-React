@@ -14,7 +14,6 @@ if (sessionStorage.Authentication) {
    axios.defaults.headers.common["Authorization"] = sessionStorage.Authentication;
 }
 
-
 axios.interceptors.request.use(
     function (config) {
         // Do something before request is sent
