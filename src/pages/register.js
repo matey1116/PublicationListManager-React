@@ -13,6 +13,8 @@ export class register extends Component {
             email: "",
             firstName: "",
             lastName: "",
+            password: "",
+            repeat:"",
             // token: "",
             // radio: "",
             stage: 1,
@@ -30,41 +32,68 @@ export class register extends Component {
         });
     };
 
+    updateState = (field) => {
+        this.setState((prevState, props) => ({
+            errors: {
+                ...prevState.errors,
+                [field]: "Required Field",
+            },
+        }))
+    }
+
     handleSubmit = (event) => {
         event.preventDefault();
         let valid = true;
         if (this.state.email === "") {
             valid = false;
-            this.setState((prevState, props) => ({
-                errors: {
-                    ...prevState.errors,
-                    email: "Required Field",
-                },
-            }))
+            this.updateState("email");
         }
         if (this.state.firstName === "") {
             valid = false;
-            this.setState((prevState, props) => ({
-                errors: {
-                    ...prevState.errors,
-                    firstName: "Required Field",
-                },
-            }))
+            this.updateState("firstName")
         }
         if (this.state.lastName === "") {
             valid = false;
 
+            this.updateState("lastName")
+        }
+        if(this.state.password === ""){
+            valid = false;
+            this.updateState("password");
+        }
+        if(this.state.repeat === ""){
+            valid = false;
+            this.updateState("repeat")
+        }
+        if(this.state.repeat !== this.state.password){
+            valid = false;
             this.setState((prevState, props) => ({
                 errors: {
                     ...prevState.errors,
-                    lastName: "Required Field",
+                    password: "Passwords don't match",
+                    repeat: "Passwords don't match"
                 },
             }))
         }
 
-        // if(valid){
-        //     axios.post
-        // }
+        if(valid){
+            axios.post("http://localhost:8080/register", {
+                email: this.state.email,
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                password: this.state.password,
+                repeatPassword: this.state.repeat
+            })
+            .then(res => {
+                console.log(res.data);
+                if(res.data === "Registered"){
+                    this.setState({
+                        stage: 2
+                    })
+                }
+            })
+            .catch(err => console.log(err.reponse.data))
+        }
 
         // if (Object.values(this.state.errors).every((el) => el == null)) {
         //     axios
@@ -127,6 +156,29 @@ export class register extends Component {
                     style={{ width: "200px" }}
                     helperText={this.state.errors.lastName}
                     error={this.state.errors.lastName ? true : false}
+                />
+                <br />
+                <TextField
+                    id="password"
+                    name="password"
+                    type="password"
+                    label="Password"
+                    value={this.state.password}
+                    onChange={this.handleChange}
+                    style={{ width: "200px" }}
+                    helperText={this.state.errors.password}
+                    error={this.state.errors.password ? true : false}
+                />
+                <br /> <TextField
+                    id="repeat"
+                    name="repeat"
+                    type="password"
+                    label="Repeat Pass"
+                    value={this.state.repeat}
+                    onChange={this.handleChange}
+                    style={{ width: "200px" }}
+                    helperText={this.state.errors.repeat}
+                    error={this.state.errors.repeat ? true : false}
                 />
                 <br />
                 <Button variant="contained" color="primary" onClick={this.handleSubmit}>
