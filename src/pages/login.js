@@ -6,8 +6,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 
-import Navbar from "./components/Navbar.js"
-
 export class login extends Component {
     constructor(props) {
         super(props);
@@ -101,7 +99,6 @@ export class login extends Component {
     render() {
         return this.state.stage === 1 ? (
             <>
-                <Navbar/>
                 <form onSubmit={this.handleSubmit}>
                     <TextField
                         id="email"
