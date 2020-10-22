@@ -1,12 +1,10 @@
 import React from 'react'
 import { useState } from "react";
-// import { makeStyles } from "@material-ui/core/styles"
-// import { Drawer } from '@material-ui/core'
 
 import { makeStyles, Drawer, Container, List, ListItem, ListItemText, IconButton } from "@material-ui/core"
 import { Link } from "react-router-dom";
-// import { IconButton } from "@material-ui/core"
 import { Menu } from "@material-ui/icons"
+
 const useStyles = makeStyles({
   list: {
     width: 250,
@@ -39,7 +37,7 @@ const SideDrawer = ({navLinks}) => {
         >
           <List component="nav">
             {navLinks.map(({ title, path }) => (
-                <ListItem button component={Link} to={path} className={classes.linkText}>
+                <ListItem button component={Link} to={path} key={title} className={classes.linkText}>
                     <ListItemText primary={title}/>
                 </ListItem>
             ))}
@@ -55,7 +53,7 @@ const SideDrawer = ({navLinks}) => {
     return (
       <React.Fragment>
         <IconButton onClick={toggleDrawer("right", true)} edge="start" aria-label="menu">
-        <Menu fontSize="large" style={{ color: `white` }}/>
+          <Menu fontSize="large" style={{ color: "white" }}/>
         </IconButton>
         <Drawer
             anchor="right"
