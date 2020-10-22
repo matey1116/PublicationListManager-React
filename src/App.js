@@ -34,7 +34,7 @@ if (sessionStorage.Authentication) {
 axios.interceptors.request.use(
     function (config) {
         // Do something before request is sent
-        config.url = config.url.replace("http://localhost:8080", "http://api.publicationlistmanager.me"/*"https://t2kgifwbac.execute-api.eu-central-1.amazonaws.com/v1" */);
+        config.url = config.url.replace("http://localhost:8080", "https://api.publicationlistmanager.me"/*"https://t2kgifwbac.execute-api.eu-central-1.amazonaws.com/v1" */);
         return config;
     },
     function (error) {
