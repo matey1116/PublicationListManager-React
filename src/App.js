@@ -8,7 +8,7 @@ import axios from 'axios';
 import login from './pages/login'
 import register from './pages/register'
 import twoFactor from './pages/twoFactor'
-import home from "./pages/home";
+import home from "./pages/home"
 import activateAcc from './pages/activate'
 
 import Navbar from "./pages/components/Navbar";
@@ -54,7 +54,6 @@ function App(props) {
                style={{
                   margin: "0",  
                   boxSizing: "border-box",
-                  // paddingTop: "80px",
                }}
             >
                <Switch>
@@ -63,8 +62,6 @@ function App(props) {
                   <Route exact path="/2fa" component={twoFactor} />
                   <Route exact path="/register" component={register} />
                   <Route exact path="/activateAccount/:id" component={activateAcc} />
-
-                  <Route exact path="/navbar" component={Navbar} />
                </Switch>
             </Container>
          </ThemeProvider>
