@@ -56,7 +56,7 @@ export class login extends Component {
                     .post("http://localhost:8080/account/login", {
                         email: this.state.email,
                         password: this.state.password,
-                    }, {withCredentials: true})
+                    })
                     .then((res) => {
                         if (res.data.jwt === "2FA") {
                             this.setState({

@@ -7,12 +7,13 @@ const Home = () => {
     );
 }
 const sendRequest = () => {
-    axios.post("http://localhost:8080/hello")
+    console.log(axios.defaults.headers.common, )
+    axios.get("http://localhost:8080/hello", {withCredentials: true})
         .then((res) => {
             console.log(res)
         })
         .catch((err) => {
-            console.log(err);
+            console.log(err.response);
         });
 }
 
