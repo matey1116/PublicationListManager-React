@@ -55,6 +55,7 @@ const SideDrawer = ({navLinks}) => {
           open={state.right}
           onOpen={toggleDrawer("right", true)}
           onClose={toggleDrawer("right", false)}
+          disableSwipeToOpen={true}
         >
           {sideDrawerList("right")}
         </SwipeableDrawer>

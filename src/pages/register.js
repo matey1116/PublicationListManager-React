@@ -1,11 +1,34 @@
 import React, { Component } from "react";
-import TextField from "@material-ui/core/TextField";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Button from "@material-ui/core/Button";
+import { Button, TextField, Container, Typography, Paper } from "@material-ui/core/";
+import { makeStyles } from '@material-ui/core/styles';
 import axios from "axios";
+import { withStyles } from '@material-ui/styles';
+import PropTypes from 'prop-types';
 
+   
+
+   const styles = theme => ({
+    formCard: {
+        backgroundColor: "#b2dfdb",
+        padding: "30px 20px",
+        margin: "0 auto",
+        maxWidth: "650px",
+    },
+    formField: {
+        margin: "7px 15px",
+        width: "230px"
+    },
+    fieldsContainer: {
+        maxWidth: "550px",
+        margin: "auto"
+    },
+    textContainer: {
+      maxWidth: "550px",
+      margin: "auto",
+      marginTop:"40px",
+      marginBottom: "20px",
+    }
+});
 class register extends Component {
     constructor(props) {
         super(props);
@@ -19,7 +42,7 @@ class register extends Component {
             errors: {},
         };
     }
-
+    
     handleChange = (event) => {
         this.setState({
             [event.target.name]: event.target.value,
@@ -87,22 +110,18 @@ class register extends Component {
     };
 
     render() {
+        const { classes } = this.props;
         return this.state.stage === 1 ? (
+            <>
+            <Container color="primary" className={classes.textContainer}>
+                <Typography variant="h6">Create a free account!</Typography>
+                <Typography variant="body2">
+                    Gather all of your publications in one place. Correct the information about your publications and present your work to the world!
+                </Typography>
+            </Container>
+            <Paper elevation={7} className={classes.formCard}>
             <form onSubmit={this.handleSubmit}>
-                <TextField
-                    id="email"
-                    name="email"
-                    type="text"
-                    label="Email"
-                    value={this.state.email}
-                    onChange={this.handleChange}
-                    style={{ width: "200px" }}
-                    helperText={this.state.errors.email}
-                    error={this.state.errors.email ? true : false}
-                />
-                <br />
-                <br />
-
+            <div className={classes.fieldsContainer}>
                 <TextField
                     id="firstName"
                     name="firstName"
@@ -110,13 +129,10 @@ class register extends Component {
                     label="First Name"
                     value={this.state.firstName}
                     onChange={this.handleChange}
-                    style={{ width: "200px" }}
+                    className={classes.formField}
                     helperText={this.state.errors.firstName}
                     error={this.state.errors.firstName ? true : false}
                 />
-                <br />
-                <br />
-
                 <TextField
                     id="lastName"
                     name="lastName"
@@ -124,19 +140,62 @@ class register extends Component {
                     label="Last Name"
                     value={this.state.lastName}
                     onChange={this.handleChange}
-                    style={{ width: "200px" }}
+                    className={classes.formField}
                     helperText={this.state.errors.lastName}
                     error={this.state.errors.lastName ? true : false}
                 />
                 <br />
+                <TextField
+                    id="email"
+                    name="email"
+                    type="text"
+                    label="Email"
+                    value={this.state.email}
+                    onChange={this.handleChange}
+                    className={classes.formField}
+                    helperText={this.state.errors.email}
+                    error={this.state.errors.email ? true : false}
+                />
+                <br/>
+                <TextField
+                    id="password"
+                    name="password"
+                    type="text"
+                    label="Password"
+                    value={this.state.password}
+                    onChange={this.handleChange}
+                    className={classes.formField}
+                    helperText={this.state.errors.password}
+                    error={this.state.errors.password ? true : false}
+                />
+                <br/>
+                <TextField
+                    id="repeatPassword"
+                    name="repeatPassword"
+                    type="text"
+                    label="Repeat password"
+                    value={this.state.repeatPassword}
+                    onChange={this.handleChange}
+                    className={classes.formField}
+                    helperText={this.state.errors.repeatPassword}
+                    error={this.state.errors.repeatPassword ? true : false}
+                />
+                <br/>
                 <Button variant="contained" color="primary" onClick={this.handleSubmit}>
                     Register
                 </Button>
+                </div>
             </form>
+            </Paper>
+            </>
         ) : (
             "Activation Email has been sent"
         );
     }
 }
+register.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
 
-export default register;
+// export default register;
+export default withStyles(styles)(register);

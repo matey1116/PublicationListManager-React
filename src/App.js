@@ -5,10 +5,14 @@ import {Container, CssBaseline} from "@material-ui/core";
 import axios from 'axios';
 import login from './pages/login'
 import register from './pages/register'
+
+import Registration from './pages/Registration/Registration'
+
+
 import twoFactor from './pages/twoFactor'
 import home from "./pages/home"
 import activateAcc from './pages/activate'
-import Navbar from "./pages/components/Navbar";
+import Navbar from "./pages/Header/Navbar";
 import { unstable_createMuiStrictModeTheme as createMuiTheme, ThemeProvider } from '@material-ui/core';
 const theme = createMuiTheme({
   palette: {
@@ -45,10 +49,14 @@ function App(props) {
             <Navbar/>
             <Container
                style={{
-                  margin: "0",  
+                  // margin: "0",  
                   boxSizing: "border-box",
-                  maxWidth: "xl",
-                  height: "310vh"
+                  margin: "0 auto",
+                  maxWidth: "md",
+                  paddingTop: "30px",
+                  // minWidth: "xl",
+                  height: "310vh",
+                  // backgroundColor: "yellow"
                }}
             >
                <Switch>
