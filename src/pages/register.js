@@ -6,7 +6,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 
-export class register extends Component {
+class register extends Component {
     constructor(props) {
         super(props);
         this.state = {
