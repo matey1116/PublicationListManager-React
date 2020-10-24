@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from "react";
 
-import { makeStyles, Drawer, Container, List, ListItem, ListItemText, IconButton } from "@material-ui/core"
+import { SwipeableDrawer , makeStyles, Container, List, ListItem, ListItemText, IconButton } from "@material-ui/core"
 import { Link } from "react-router-dom";
 import { Menu } from "@material-ui/icons"
 
@@ -29,41 +29,36 @@ const SideDrawer = ({navLinks}) => {
     }
 
     const sideDrawerList = anchor => (
-        <Container
-          className={classes.list}
-          role="presentation"
-          onClick={toggleDrawer(anchor, false)}
-          onKeyDown={toggleDrawer(anchor, false)}
-        >
-          <List component="nav">
-            {navLinks.map(({ title, path }) => (
-                <ListItem button component={Link} to={path} key={title} className={classes.linkText}>
-                    <ListItemText primary={title}/>
-                </ListItem>
-            ))}
-          </List>
-        </Container>
-      );
-
-                                    
-
-
-
+      <Container
+        className={classes.list}
+        role="presentation"
+        onClick={toggleDrawer(anchor, false)}
+        onKeyDown={toggleDrawer(anchor, false)}
+      >
+        <List component="nav">
+          {navLinks.map(({ title, path }) => (
+              <ListItem button component={Link} to={path} key={title} className={classes.linkText}>
+                  <ListItemText primary={title}/>
+              </ListItem>
+          ))}
+        </List>
+      </Container>
+    );
 
     return (
       <React.Fragment>
         <IconButton onClick={toggleDrawer("right", true)} edge="start" aria-label="menu">
           <Menu fontSize="large" style={{ color: "white" }}/>
         </IconButton>
-        <Drawer
-            anchor="right"
-            open={state.right}
-            onOpen={toggleDrawer("right", true)}
-            onClose={toggleDrawer("right", false)}
+        <SwipeableDrawer 
+          anchor="right"
+          open={state.right}
+          onOpen={toggleDrawer("right", true)}
+          onClose={toggleDrawer("right", false)}
         >
-            {sideDrawerList("right")}
-        </Drawer>
+          {sideDrawerList("right")}
+        </SwipeableDrawer>
       </React.Fragment>
     )
-  }
+}
 export default SideDrawer
