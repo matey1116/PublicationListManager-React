@@ -1,19 +1,15 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-
-import Container from "@material-ui/core/Container";
-import CssBaseline from "@material-ui/core/CssBaseline";
+import {Container, CssBaseline} from "@material-ui/core";
 import axios from 'axios';
 import login from './pages/login'
 import register from './pages/register'
 import twoFactor from './pages/twoFactor'
 import home from "./pages/home"
 import activateAcc from './pages/activate'
-
 import Navbar from "./pages/components/Navbar";
-
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { unstable_createMuiStrictModeTheme as createMuiTheme, ThemeProvider } from '@material-ui/core';
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -25,11 +21,9 @@ const theme = createMuiTheme({
   },
 });
 
-
 if (sessionStorage.Authentication) {
    axios.defaults.headers.common["Authorization"] = sessionStorage.Authentication;
 }
-
 
 axios.interceptors.request.use(
     function (config) {
@@ -50,10 +44,11 @@ function App(props) {
          <ThemeProvider theme={theme}>
             <Navbar/>
             <Container
-               maxWidth="xl"
                style={{
                   margin: "0",  
                   boxSizing: "border-box",
+                  maxWidth: "xl",
+                  height: "310vh"
                }}
             >
                <Switch>

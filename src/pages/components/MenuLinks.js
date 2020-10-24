@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 const useStyles = makeStyles({
     navDisplayFlex: {
       display: `flex`,
-    //   justifyContent: `center`
     },
     linkText: {
       textDecoration: `none`,
