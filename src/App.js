@@ -4,14 +4,13 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {Container, CssBaseline} from "@material-ui/core";
 import axios from 'axios';
 import login from './pages/login'
-import register from './pages/register'
+import Register from './pages/Registration/Register'
 
-import Registration from './pages/Registration/Registration'
 
 
 import twoFactor from './pages/twoFactor'
 import home from "./pages/home"
-import activateAcc from './pages/activate'
+import Activate from './pages/Registration/Activate'
 import Navbar from "./pages/Header/Navbar";
 import { unstable_createMuiStrictModeTheme as createMuiTheme, ThemeProvider } from '@material-ui/core';
 const theme = createMuiTheme({
@@ -32,7 +31,7 @@ if (sessionStorage.Authentication) {
 axios.interceptors.request.use(
     function (config) {
         // Do something before request is sent
-        config.url = config.url.replace("http://localhost:8080", "http://api.publicationlistmanager.me"/*"https://t2kgifwbac.execute-api.eu-central-1.amazonaws.com/v1" */);
+        config.url = config.url.replace("http://localhost:8080", "https://api.publicationlistmanager.me"/*"https://t2kgifwbac.execute-api.eu-central-1.amazonaws.com/v1" */);
         return config;
     },
     function (error) {
@@ -63,8 +62,8 @@ function App(props) {
                   <Route exact path="/" component={home} />
                   <Route exact path="/login" component={login} />
                   <Route exact path="/2fa" component={twoFactor} />
-                  <Route exact path="/register" component={register} />
-                  <Route exact path="/activateAccount/:id" component={activateAcc} />
+                  <Route exact path="/register" component={Register} />
+                  <Route exact path="/activateAccount/:id" component={Activate} />
                </Switch>
             </Container>
          </ThemeProvider>

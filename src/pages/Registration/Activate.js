@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 import QRCode from "qrcode.react";
 import TextField from "@material-ui/core/TextField";
 
-export class activate extends Component {
+export class Activate extends Component {
     constructor(props) {
         super(props);
         console.log(props);
@@ -39,7 +39,7 @@ export class activate extends Component {
         event.preventDefault();
         if (this.state.checkbox === false) {
             axios
-                .get(`http://localhost:8080/activate/${this.state.uuid}`)
+                .get(`http://localhost:8080/account/activate/${this.state.uuid}`)
                 .then((res) => console.log(res.data))
                 .catch((err) => console.log(err.response.data));
         } else {
@@ -99,4 +99,4 @@ export class activate extends Component {
     }
 }
 
-export default activate;
+export default Activate;
