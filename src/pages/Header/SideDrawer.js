@@ -47,7 +47,7 @@ const SideDrawer = ({navLinks}) => {
 
     return (
       <React.Fragment>
-        <IconButton onClick={toggleDrawer("right", true)} edge="start" aria-label="menu">
+        <IconButton onClick={toggleDrawer("right", true)} aria-label="menu">
           <Menu fontSize="large" style={{ color: "white" }}/>
         </IconButton>
         <SwipeableDrawer 

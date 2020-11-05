@@ -2,6 +2,14 @@ import axios from 'axios';
 
 const Home = () => {
     sendRequest()
+    let jwt = axios.defaults.headers.common["Authorization"];
+    console.log(jwt)
+    if(jwt !== undefined){
+        jwt = JSON.parse(atob(jwt.split('.')[1]));
+        console.log( "session storage: ")
+        console.log(jwt)
+    }
+    else console.log("no token")
     return (
         "HI"
     );

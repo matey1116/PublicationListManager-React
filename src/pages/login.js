@@ -9,8 +9,8 @@ import { Link as routingLink } from "react-router-dom";
 const styles = theme => ({
     formCard: {
         backgroundColor: "#b2dfdb",
-        color: "white",
-        // backgroundColor: theme.palette.primary.light,
+        // color: "white",
+        color: theme.palette.primary.main,
         padding: "30px 25px",
         margin: "0 auto",
         maxWidth: "550px",
@@ -33,7 +33,17 @@ const styles = theme => ({
         display: "flex",
         padding: "0 10px",
         alignItems: "center",
-    }
+    },
+    formCardStage2: {
+        backgroundColor: "#b2dfdb",
+        color: theme.palette.primary.main,
+        padding: "30px 25px",
+        margin: "0 auto",
+        maxWidth: "550px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems:"center",
+    },
 });
 
 export class login extends Component {
@@ -53,7 +63,7 @@ export class login extends Component {
         this.setState({
             showPassword: (!this.state.showPassword)
         });
-      };
+    };
     
     handleMouseDownPassword = (event) => {
         event.preventDefault();
@@ -92,6 +102,8 @@ export class login extends Component {
                     })
                     .then((res) => {
                         if (res.data.jwt === "2FA") {
+                            console.log("res.data.jwt === 2FA")
+                            console.log(this.state)
                             this.setState({
                                 stage: 2,
                             });
@@ -100,6 +112,9 @@ export class login extends Component {
                             sessionStorage.setItem("Authentication", `Bearer ${res.data.jwt}`);
                             axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.jwt}`;
                             console.log(res.data.jwt)
+                            // console.log("props: "+this.props.loggedIn)
+                            // this.setLoggedIn(true)
+                            return this.props.history.push('/')
                         }
                     })
                     .catch((err) => {
@@ -110,25 +125,30 @@ export class login extends Component {
                     });
             }
         }
-        else{
-            if(this.state.token !== ""){
-                axios
-                    .post("http://localhost:8080/login", {
-                        email: this.state.email,
-                        password: this.state.password,
-                        token: this.state.token
-                    })
-                    .then((res) => {
-                        if (res.data.jwt) {
-                            sessionStorage.setItem("Authentication", `Bearer ${res.data.jwt}`);
-                            axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.jwt}`;
-                            console.log(res.data.jwt)
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            }
+        else{          
+            if(this.state.email === "" || this.state.password === "") return this.setState({  stage:1 });    
+            if(this.state.token === "") return this.setErrorMsg("token","Required Field");
+            console.log(this.state)
+            axios
+                .post("http://localhost:8080/account/login", {
+                    email: this.state.email,
+                    password: this.state.password,
+                    token: this.state.token
+                })
+                .then((res) => {
+                    if (res.data.jwt) {
+                        sessionStorage.setItem("Authentication", `Bearer ${res.data.jwt}`);
+                        axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.jwt}`;
+                        console.log(res.data.jwt)
+                        return this.props.history.push('/')
+                    }
+                })
+                .catch((err) => {
+                    if (err.response.data.code === "Bad Code") this.setErrorMsg("code", "The code is invalid. Try again.")
+                    if (err.response.data.code === "Code must not be empty") this.setErrorMsg("code", "Required Field")
+                    if (err.response.data.error === "Unauthorized") this.setState({  stage:1 });
+                    console.log(err.response.data);
+                });
         }
     };
 
@@ -137,10 +157,7 @@ export class login extends Component {
         return this.state.stage === 1 ? (
             <>
             <Container color="primary" className={classes.textContainer}>
-                <Typography variant="h6">Create a free account!</Typography>
-                <Typography variant="body2">
-                    Gather all of your publications in one place. Correct the information about your publications and present your work to the world!
-                </Typography>
+                <Typography variant="h6">Log in:</Typography>
             </Container>
             <Paper elevation={7} className={classes.formCard}>
             <form onSubmit={this.handleSubmit}>
@@ -205,22 +222,27 @@ export class login extends Component {
             </>
 
         ) : (
-            <>
+            <div className={classes.formCardStage2}>
+                <Typography variant="body2"> 
+                    The app generates a numerical code, which is needed to log in.
+                    This will make sure your account can be accessed only by you.
+                    Open the Google Authentication app and copy the code into the box below.
+                </Typography>
                 <TextField
                     id="token"
                     name="token"
                     type="number"
-                    label="Google Authenticator Code"
+                    label="Authentication Code"
                     value={this.state.token}
                     onChange={this.handleChange}
-                    style={{ width: "200px" }}
                     helperText={this.state.errors.token}
+                    style={{marginTop:"10px"}}
                     error={this.state.errors.token ? true : false}
                 />
-                <Button variant="contained" color="primary" onClick={this.handleSubmit}>
-                    Authenticate
+                <Button variant="contained" style={{margin: "20px 0"}} color="primary" onClick={this.handleSubmit}>
+                    Submit
                 </Button>
-            </>
+            </div>
         );
     }
 }
