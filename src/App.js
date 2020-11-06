@@ -3,11 +3,8 @@ import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {Container, CssBaseline} from "@material-ui/core";
 import axios from 'axios';
-import login from './pages/login'
+import Login from './pages/Login'
 import Register from './pages/Registration/Register'
-
-
-
 
 import TwoFactorLogin from './pages/TwoFactorLogin'
 import home from "./pages/home"
@@ -82,7 +79,20 @@ function App(props) {
             >
                <Switch>
                   <Route exact path="/" component={home} />
-                  <Route exact path="/login" component={login} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
+
+                  {/* <Route exact path="/login">
+                     <Login loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
+                  </Route> */}
+                  {/* <Route
+                     exact path='/login'
+                     render={props => <Login props={props} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
+                  /> */}
+                  {/* <Route exact path="/login" component={() => <Login loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>}/> */}
+
+                  {/* <Route exact path="/login" render={Login} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/> */}
+
+                  <Route eact path='/login' render={routeProps => <Login {...routeProps} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
+
                   <Route exact path="/2fa" component={TwoFactorLogin} />
                   <Route exact path="/register" component={Register} />
                   <Route exact path="/activateAccount/:id" component={Activate}/>

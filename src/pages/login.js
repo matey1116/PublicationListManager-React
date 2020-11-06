@@ -46,7 +46,8 @@ const styles = theme => ({
     },
 });
 
-export class login extends Component {
+export class Login extends Component {
+    
     constructor(props) {
         super(props);
         this.state = {
@@ -112,12 +113,12 @@ export class login extends Component {
                             sessionStorage.setItem("Authentication", `Bearer ${res.data.jwt}`);
                             axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.jwt}`;
                             console.log(res.data.jwt)
-                            // console.log("props: "+this.props.loggedIn)
-                            // this.setLoggedIn(true)
+                            this.props.setLoggedIn(true)
                             return this.props.history.push('/')
                         }
                     })
                     .catch((err) => {
+                        console.log(err)
                         if ((err.response.status===400) || (err.response.status===401)){
                             this.setErrorMsg("email","The email or password is incorrect!");
                             this.setErrorMsg("password"," ");
@@ -140,18 +141,21 @@ export class login extends Component {
                         sessionStorage.setItem("Authentication", `Bearer ${res.data.jwt}`);
                         axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.jwt}`;
                         console.log(res.data.jwt)
+                        this.props.setLoggedIn(true)
                         return this.props.history.push('/')
                     }
                 })
                 .catch((err) => {
-                    if (err.response.data.code === "Bad Code") this.setErrorMsg("code", "The code is invalid. Try again.")
-                    if (err.response.data.code === "Code must not be empty") this.setErrorMsg("code", "Required Field")
+                    if (err.response.data.token === "Invalid Token") this.setErrorMsg("token", "The code is invalid. Try again.")
+                    if (err.response.data.code === "Bad Code") this.setErrorMsg("token", "The code is invalid. Try again.")
+                    if (err.response.data.code === "Code must not be empty") this.setErrorMsg("token", "Required Field")
                     if (err.response.data.error === "Unauthorized") this.setState({  stage:1 });
                     console.log(err.response.data);
+                    console.log(err.response.data.token);
                 });
         }
     };
-
+    
     render() {
         const { classes } = this.props;
         return this.state.stage === 1 ? (
@@ -246,7 +250,7 @@ export class login extends Component {
         );
     }
 }
-login.propTypes = {
+Login.propTypes = {
     classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(login);
+export default withStyles(styles)(Login);
