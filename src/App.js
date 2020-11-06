@@ -79,20 +79,7 @@ function App(props) {
             >
                <Switch>
                   <Route exact path="/" component={home} />
-
-                  {/* <Route exact path="/login">
-                     <Login loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
-                  </Route> */}
-                  {/* <Route
-                     exact path='/login'
-                     render={props => <Login props={props} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
-                  /> */}
-                  {/* <Route exact path="/login" component={() => <Login loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>}/> */}
-
-                  {/* <Route exact path="/login" render={Login} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/> */}
-
                   <Route eact path='/login' render={routeProps => <Login {...routeProps} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
-
                   <Route exact path="/2fa" component={TwoFactorLogin} />
                   <Route exact path="/register" component={Register} />
                   <Route exact path="/activateAccount/:id" component={Activate}/>

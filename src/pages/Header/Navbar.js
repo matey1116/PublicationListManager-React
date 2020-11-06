@@ -91,10 +91,10 @@ const Navbar = (props) => {
             }}>
               <Home fontSize="large" />
               <Typography variant="h6">
-                <Hidden only={['xs']}>           
+                <Hidden only={['xxs']}>           
                     Publication List Manager
                 </Hidden>
-                <Hidden smUp>           
+                <Hidden xsUp>           
                     PLM
                 </Hidden>
               </Typography>             
@@ -119,7 +119,7 @@ const Navbar = (props) => {
             </div>
           </Hidden>
           <Hidden lgUp>
-            <SideDrawer navLinks={navLinks}/>
+            <SideDrawer navLinks={navLinks} loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn} logOut={logOut}/>
           </Hidden>
         </Toolbar>
       </AppBar>
