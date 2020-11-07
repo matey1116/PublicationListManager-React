@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const Home = () => {
-    sendRequest()
+    // sendRequest()
     let jwt = axios.defaults.headers.common["Authorization"];
     console.log(jwt)
     if(jwt !== undefined){
@@ -14,14 +14,14 @@ const Home = () => {
         "HI"
     );
 }
-const sendRequest = () => {
-    axios.post("http://localhost:8080/hello")
-        .then((res) => {
-            console.log(res)
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-}
+// const sendRequest = () => {
+//     axios.post("http://localhost:8080/hello")
+//         .then((res) => {
+//             console.log(res)
+//         })
+//         .catch((err) => {
+//             console.log(err);
+//         });
+// }
 
 export default Home

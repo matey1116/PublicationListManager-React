@@ -121,8 +121,6 @@ class Register extends Component {
         // else console.log("erros, stop")
 
         if (valid) {
-            console.log("posting")
-            console.log(this.state)
             axios
                 .post("http://localhost:8080/account/register", {
                     email: this.state.email,

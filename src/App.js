@@ -8,6 +8,9 @@ import Register from './pages/Registration/Register'
 
 import TwoFactorLogin from './pages/TwoFactorLogin'
 import home from "./pages/home"
+import QueryDBLP from "./pages/QueryDBLP"
+import Profile from "./pages/Profile/Profile"
+
 import Activate from './pages/Registration/Activate'
 import Navbar from "./pages/Header/Navbar";
 import { unstable_createMuiStrictModeTheme as createMuiTheme, ThemeProvider } from '@material-ui/core';
@@ -83,6 +86,9 @@ function App(props) {
                   <Route exact path="/2fa" component={TwoFactorLogin} />
                   <Route exact path="/register" component={Register} />
                   <Route exact path="/activateAccount/:id" component={Activate}/>
+                  <Route exact path="/queryDBLP" component={QueryDBLP}/>
+                  <Route exact path="/profile" component={Profile}/>
+
                   {/* <Route exact path="/profile" component={Profile}/> */}
                </Switch>
             </Container>
