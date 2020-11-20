@@ -1,24 +1,39 @@
-import React from "react";
+import React, {useState} from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {Container, CssBaseline} from "@material-ui/core";
 import axios from 'axios';
-import login from './pages/login'
-import register from './pages/register'
-import twoFactor from './pages/twoFactor'
+import Login from './pages/Login'
+import Register from './pages/Registration/Register'
+
+import TwoFactorLogin from './pages/TwoFactorLogin'
 import home from "./pages/home"
-import activateAcc from './pages/activate'
-import Navbar from "./pages/components/Navbar";
+import QueryDBLP from "./pages/QueryDBLP"
+import Profile from "./pages/Profile/Profile"
+
+import Activate from './pages/Registration/Activate'
+import Navbar from "./pages/Header/Navbar";
 import { unstable_createMuiStrictModeTheme as createMuiTheme, ThemeProvider } from '@material-ui/core';
 const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: "#00796b"
+   breakpoints: {
+      keys: ["xxs","xs", "sm", "md", "lg", "xl"],
+      values: {
+        xxs: 0,
+        xs: 390,
+        sm: 600,
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+      },
     },
-    secondary: {
-      main: "#ffa726",
-    },
-  },
+   palette: {
+      primary: {
+         main: "#00796b"
+      },
+      secondary: {
+         main: "#ffa726",
+      },
+   },
 });
 
 if (sessionStorage.Authentication) {
@@ -36,27 +51,45 @@ axios.interceptors.request.use(
         return Promise.reject(error);
     }
 );
-
+// const [loggedIn, setLoggedIn] = useState("ola maddame");
 function App(props) {
+  const [loggedIn, setLoggedIn] = useState(()=>{
+      if(axios.defaults.headers.common["Authorization"] === undefined) return false
+      return true
+  });
+//   function requireAuth(nextState, replace, next) {
+//    if (!authenticated) {
+//      replace({
+//        pathname: "/login",
+//        state: {nextPathname: nextState.location.pathname}
+//      });
+//    }
+//    next();
+//  }
    return (
       <Router>
          <CssBaseline />
          <ThemeProvider theme={theme}>
-            <Navbar/>
+            <Navbar loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
             <Container
                style={{
-                  margin: "0",  
                   boxSizing: "border-box",
-                  maxWidth: "xl",
-                  height: "310vh"
+                  margin: "0 auto",
+                  maxWidth: "md",
+                  paddingTop: "30px",
+                  height: "310vh",
                }}
             >
                <Switch>
                   <Route exact path="/" component={home} />
-                  <Route exact path="/login" component={login} />
-                  <Route exact path="/2fa" component={twoFactor} />
-                  <Route exact path="/register" component={register} />
-                  <Route exact path="/activateAccount/:id" component={activateAcc} />
+                  <Route eact path='/login' render={routeProps => <Login {...routeProps} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
+                  <Route exact path="/2fa" component={TwoFactorLogin} />
+                  <Route exact path="/register" component={Register} />
+                  <Route exact path="/activateAccount/:id" component={Activate}/>
+                  <Route exact path="/queryDBLP" component={QueryDBLP}/>
+                  <Route exact path="/profile" component={Profile}/>
+
+                  {/* <Route exact path="/profile" component={Profile}/> */}
                </Switch>
             </Container>
          </ThemeProvider>

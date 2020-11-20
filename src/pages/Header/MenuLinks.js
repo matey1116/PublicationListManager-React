@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 const useStyles = makeStyles({
     navDisplayFlex: {
       display: `flex`,
+      justifyContent:"space-around"
     },
     linkText: {
       textDecoration: `none`,
@@ -19,7 +20,9 @@ function MenuLinks({navLinks}) {
     return (
         <List component="nav" className={classes.navDisplayFlex}  aria-labelledby="main navigation">
             {navLinks.map(({ title, path }) => (
-                <ListItem style={{ margin: "0 0px", width:"max-content"}} button component={Link} to={path} key={title} className={classes.linkText}>
+                <ListItem style={{
+                  //  margin: "0 0px",
+                    width:"max-content"}} button component={Link} to={path} key={title} className={classes.linkText}>
                     <ListItemText primary={title}/>
                 </ListItem>
             ))}
