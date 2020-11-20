@@ -3,7 +3,7 @@ import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {Container, CssBaseline} from "@material-ui/core";
 import axios from 'axios';
-import Login from './pages/Login'
+import Login from './pages/login'
 import Register from './pages/Registration/Register'
 
 import TwoFactorLogin from './pages/TwoFactorLogin'
