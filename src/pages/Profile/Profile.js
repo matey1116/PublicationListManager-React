@@ -148,8 +148,8 @@ class Profile extends Component {
                     }
                     console.log(providers)
                     this.setState({
-                        // providers: providers,
-                        providers: [],
+                        providers: providers,
+                        // providers: [],
                         loadingProviders: false
                     });
                     // console.log("loadingProvidres: "+this.state.loadingProviders )
