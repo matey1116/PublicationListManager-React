@@ -16,7 +16,7 @@ const navLinks = [
   { title: `Home`, path: `/` },
   // { title: `Login`, path: `/login` },
   // { title: `Register`, path: `/register` },
-  { title: `Search`, path: `/search` },
+  { title: `Query DBLP`, path: `/queryDBLP` },
   { title: `about us 2`, path: `/about-us` },
   { title: `about us 3`, path: `/about-us` },
   { title: `about us 4`, path: `/about-us` },

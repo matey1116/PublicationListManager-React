@@ -34,7 +34,7 @@ const theme = createMuiTheme({
          main: "#00796b"
       },
       secondary: {
-         main: "#ffa726",
+         main: "#00a3cc",
       },
    },
 });
@@ -80,7 +80,7 @@ function App(props) {
                   margin: "0 auto",
                   maxWidth: "md",
                   paddingTop: "30px",
-                  height: "310vh",
+                  minHeight: "100vh",
                }}
             >
                <Switch>
