@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import { Collapse, CircularProgress, FormLabel, 
-    FormControlLabel, RadioGroup, Radio, Button, Link, Container, 
+    FormControlLabel, RadioGroup, Radio, Button, Container, 
     Typography, Paper, FormControl, TextField} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
 import axios from "axios";
@@ -59,7 +59,6 @@ const styles = theme => ({
             padding: "30px 3px",
         },
         marginTop: "40px",
-        display: "flex",
         flexDirection: "column",
     },
 })
@@ -168,7 +167,7 @@ class QueryDBLP extends Component {
             articles: [],
             errors: {
                 ...prevState.errors,
-                ["searchResults"]: null,
+                // ["searchResults"]: null,
             },
             loading: true,
             collapseResults: false,

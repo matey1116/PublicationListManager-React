@@ -12,15 +12,14 @@ import { Link } from "react-router-dom";
 // import { useTheme } from '@material-ui/core/styles';
 import axios from 'axios';
 
-const navLinks = [
+const loggedInNavLinks = [
   { title: `Home`, path: `/` },
-  // { title: `Login`, path: `/login` },
-  // { title: `Register`, path: `/register` },
   { title: `Query DBLP`, path: `/queryDBLP` },
-  { title: `about us 2`, path: `/about-us` },
-  { title: `about us 3`, path: `/about-us` },
-  { title: `about us 4`, path: `/about-us` },
-  { title: `about us 5`, path: `/about-us` },
+  { title: `Profile`, path: `/profile` },
+]
+const loggedOutNavLinks = [
+  { title: `Home`, path: `/` },
+  { title: `Query DBLP`, path: `/queryDBLP` },
 ]
 const loggedOutLinks = [
   { title: `Log in`, path: `/login` },
@@ -106,7 +105,7 @@ const Navbar = (props) => {
               //  backgroundColor: "blue",
                margin:" 0 auto",
               }}>
-              <MenuLinks navLinks={navLinks}/>
+              <MenuLinks navLinks={props.loggedIn ? loggedInNavLinks : loggedOutNavLinks} />
             </div>
             <div>
               {props.loggedIn ? 
@@ -119,7 +118,7 @@ const Navbar = (props) => {
             </div>
           </Hidden>
           <Hidden lgUp>
-            <SideDrawer navLinks={navLinks} loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn} logOut={logOut}/>
+            <SideDrawer navLinks={props.loggedIn ? loggedInNavLinks : loggedOutNavLinks} loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn} logOut={logOut}/>
           </Hidden>
         </Toolbar>
       </AppBar>

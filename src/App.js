@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import "./App.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch } from "react-router-dom";
 import {Container, CssBaseline} from "@material-ui/core";
 import axios from 'axios';
 import Login from './pages/Login'
@@ -16,6 +16,8 @@ import PublicRoute from './PublicRoute'
 
 import Activate from './pages/Registration/Activate'
 import Navbar from "./pages/Header/Navbar";
+import Footer from "./pages/Footer";
+
 import { unstable_createMuiStrictModeTheme as createMuiTheme, ThemeProvider } from '@material-ui/core';
 const theme = createMuiTheme({
    breakpoints: {
@@ -101,6 +103,7 @@ function App(props) {
                   {/* <Route exact path="/profile" component={Profile}/> */}
                </Switch>
             </Container>
+            <Footer/>
          </ThemeProvider>
       </Router>
    );
