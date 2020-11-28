@@ -11,6 +11,17 @@ import axios from "axios";
 import PropTypes from 'prop-types';
 
 const styles = theme => ({
+    formCard: {
+        backgroundColor: "#b2dfdb",
+        // color: "white",
+        color: theme.palette.primary.main,
+        padding: "30px 25px",
+        margin: "0 auto",
+        maxWidth: "550px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+    },
     formCardStage2: {
         backgroundColor: "#b2dfdb",
         color: theme.palette.primary.main,
@@ -28,7 +39,10 @@ const styles = theme => ({
       marginBottom: "20px",
     },
     submitContainer: {
-        margin: "20px 0"
+        // margin: "20px 0",
+        // padding: "3px 5px",
+        maxWidth: "300px",
+        margin: "20px auto",
     },
     successContainer: {
         maxWidth: "650px",
@@ -46,8 +60,10 @@ export class Activate extends Component {
             checkbox: false,
             uuid: props.match.params.id,
             imageURL: "",
+            secret: "",
             code: "",
             errors: {},
+            cantScan: false,
         };
     }
     setErrorMsg = (fieldName, message) =>{   
@@ -70,9 +86,18 @@ export class Activate extends Component {
             if(this.state.imageURL === ""){
                 axios
                 .get(`http://localhost:8080/account/generateQR/${this.state.uuid}`)
-                .then((res) => this.setState({ imageURL: res.data }))
+                .then((res) => {
+                    this.setState({ 
+                        imageURL: res.data.qrcode,
+                        secret: res.data.secret,
+                    })
+                    console.log("imageURL : "+this.state.imageURL)
+                    console.log("secret : "+this.state.secret)
+                })
                 // .catch((err) => console.log(err.response.data));
                 .catch((err) => {
+                    console.log(err);
+
                     if (err.response.data.uuid) this.setErrorMsg("checkbox", "Something went wrong. Please try again.")
                     console.log(err.response.data);
                 });
@@ -138,14 +163,13 @@ export class Activate extends Component {
                 <Paper elevation={7} className={classes.formCard}>
                     <Collapse in={this.state.errors.errorAlert !== undefined && this.state.errors.errorAlert !== ""}>
                         <Alert severity="error" style={{marginBottom:"20px"}}>
-                           {this.state.errors.errorAlert}
                            <IconButton aria-label="close" color="inherit" size="small" onClick={()=>{this.setErrorMsg("errorAlert","")}}>
                                 <CloseIcon fontSize="inherit" />
                             </IconButton>
                         </Alert>
                     </Collapse>
                     <div>
-                        <Typography variant="body2">
+                        <Typography variant="body1">
                             Enable Two-Factor Authentication (2FA) for even greater security! 
                             To use Two-Factor Authentication, Google's Authentication app is required.
                             Every time you log in, you will be asked to input a code that can be found in the Google Authentication App.
@@ -173,9 +197,27 @@ export class Activate extends Component {
                     </div>
                 <Collapse in={this.state.checkbox && this.state.imageURL !== ""}>
                 <div style={{display: "flex", flexDirection:"column", alignItems:"center"}}>
-                        <img alt="QR Code" style={{margin:"0 auto"}} src={this.state.imageURL}/>
-                        <br />
+                        <img alt="QR Code" style={{margin:"0 auto", marginBottom:"5px",}} src={this.state.imageURL}/>
+            
                         <Typography variant="body2">
+                            If you can't scan the QR code, <Link color="secondary" component="button" 
+                            onClick={()=>{this.setState({cantScan: true})}} >
+                                click here</Link>&nbsp;!
+                        </Typography>
+                        <br/>
+
+                        <Collapse in={this.state.cantScan}>
+                        <Typography variant="h6">
+                            Can't scan the QR code?
+                        </Typography>
+                        <Typography variant="body1">
+                            If you are unable to scan the QR code, enter the following code into the Google Authentication app to activate Two-Factor Authentication.
+                            <strong><br/>Code:&nbsp;{this.state.secret}</strong>
+                        </Typography>
+                        <br/>
+                        </Collapse>
+                        
+                        <Typography variant="body1">
                             Open the Google Authentication app and scan the QR code from above.
                             The app generates a numerical code, which will be needed when logging in.
                             This will make sure your account can be accessed only by you.
@@ -195,8 +237,10 @@ export class Activate extends Component {
                             error={this.state.errors.code ? true : false}
                             style={{marginTop:"10px"}}
                         />
+                        
                     </div>
                 </Collapse>
+
                 <Button className={classes.submitContainer} variant="contained" color="primary" onClick={this.handleActivate}>
                     Activate
                 </Button>
