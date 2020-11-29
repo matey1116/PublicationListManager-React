@@ -9,6 +9,7 @@ import Register from './pages/Registration/Register'
 import TwoFactorLogin from './pages/TwoFactorLogin'
 import home from "./pages/home"
 import QueryDBLP from "./pages/QueryDBLP"
+import ImportRecord from "./pages/ImportRecord"
 import Profile from "./pages/Profile/Profile"
 
 import PrivateRoute from './PrivateRoute'
@@ -87,6 +88,7 @@ function App(props) {
             >
                <Switch>
                   <PrivateRoute exact path="/profile" loggedIn={loggedIn} component={Profile}/>
+                  <PublicRoute exact path="/importRecord" component={ImportRecord}/>
                   <PublicRoute restricted={true} exact path='/login' loggedIn={loggedIn} component={routeProps => <Login {...routeProps} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
                   <PublicRoute restricted={false} exact path='/' component={home} />
                   <PublicRoute restricted={true} exact path='/2fa' component={TwoFactorLogin} />
