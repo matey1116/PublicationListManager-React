@@ -432,15 +432,17 @@ class ImportRecord extends Component {
                 }
 
                 {(this.state.stage !== 1) && (this.state.articles.length !== 0) &&
-                    <div>
-                        {console.log("this.state.articles[this.state.stage]")}
-                        {console.log(this.state.articles[this.state.stage])}
-                        {console.log("this.state.stage")}
-                        {console.log(this.state.stage)}
-                        <EditableArticleCard name={`article_1`} article={this.state.articles[0]}/>
-                    </div>
+                    this.state.articles.map((article, index) => {
+                        return (
+                            <div key={"article_"+index}>
+                                
+                                <EditableArticleCard name={"article_"+index} key={index} article={article}/>
+                                {this.renderMandatoryData(index)}
+                                {this.renderMetadata(index)}
+                            </div>
+                        )
+                    })
                 }
-
                 {(this.state.stage !== 1) && (this.state.articles.length !== 0) ?
                     (<Button disabled={this.state.loading} variant="contained" color="primary" onClick={this.stage2handleSubmit} style={{marginRight: "0",
                         // marginLeft: "auto",
