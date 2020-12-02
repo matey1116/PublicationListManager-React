@@ -1,8 +1,8 @@
 import React, {Component} from "react";
-import { FormHelperText, TextareaAutosize, Collapse, CircularProgress, FormLabel, 
-    List, ListItemText, ListItem, Radio, Button, Container, 
-    Typography, Paper, FormControl, TextField} from "@material-ui/core";
-import SearchIcon from '@material-ui/icons/Search';
+import { FormHelperText, TextareaAutosize,
+    Button, Container, Typography, Paper, FormControl
+    } from "@material-ui/core";
+import { Alert, AlertTitle } from '@material-ui/lab';
 import axios from "axios";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
@@ -33,7 +33,7 @@ const styles = theme => ({
         width: "235px"
     },
     textContainer: {
-        maxWidth: "550px",
+        maxWidth: "800px",
         margin: "auto",
         marginTop:"40px",
         marginBottom: "20px",
@@ -67,24 +67,26 @@ const styles = theme => ({
         display: "flex",
         flexDirection: "column",
     },
+    successContainer: {
+        maxWidth: "650px",
+        margin: "30px auto"
+    },
 })
 
 class ImportRecord extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // bibtex: "",
+            timer: 5,
             bibtex: "",
             articles: [],
-            metadatas: [],
-            authors: [],
             collapseResults: true,
             errors: {},
             stage: 1,
             loading: false,
-        };   
-        this.renderMetadata = this.renderMetadata.bind(this);
-        
+            showArticle: -1,
+            article: {}
+        };       
     }
 
     handleChange = (event) => {
@@ -95,41 +97,6 @@ class ImportRecord extends Component {
                 [event.target.name]: null,
             }, 
         });
-    };
-
-    handleMandatoryFieldChange = (event,articleIndex) => {
-        let {name,value} = event.target;
-        this.setState(({articles}) => {
-            articles[articleIndex][name] = value;
-            return {
-                articles: articles,
-                // errors: {
-                    // ...this.state.errors,
-                    // [event.target.name]: null,
-                // },
-            }
-        });
-    };
-
-    handleFieldUpdate = (event, articleIndex, fieldIndex, index) => {
-        // console.log(event+"\n"+articleIndex+"\n"+fieldIndex+"\n"+index+"\n\n\n");
-        // console.log(`[event.target.name]: event.target.value,`)
-        // console.log(`${[event.target.name]}: ${event.target.value}\n\n\n`)
-        let newValue = event.target.value
-        this.setState(({metadatas}) => {
-            console.log("this is prev metadatas")
-            console.log(metadatas)
-            metadatas[articleIndex][fieldIndex][index] = newValue
-            // [event.target.name]: event.target.value,
-            return {
-                metadatas: metadatas,
-                // errors: {
-                    // ...this.state.errors,
-                    // [event.target.name]: null,
-                // },
-            }
-        });
-    
     };
 
     setErrorMsg = (fieldName, message) =>{   
@@ -154,35 +121,17 @@ class ImportRecord extends Component {
                 bibtex: this.state.bibtex,
             })
             .then((res) => {                 
-                let metadatas = []
-                let authors = []
-                console.log("res.status")
-                console.log(res.status)
                 if(res.data === "All articles from BiBTeX are already imported"){
                     return this.setErrorMsg("bibtex", "All articles from BiBTeX are already imported")
                 }
-                console.log("res.data")
-                console.log(res.data)
                 if(res.status === 200){
-                    res.data.map((article, index) => {
-                        article.authors === undefined ? 
-                            authors.push({}) 
-                            :
-                            authors.push(article.authors) 
-                        article.metadata === undefined ? 
-                            metadatas.push({}) 
-                            :
-                            metadatas.push(Object.entries(article.metadata)) 
-                    })
                     this.setState({
                         articles: res.data,
                         loading: false,
                         stage: 2,
-                        metadatas: metadatas,
-                        authors: authors,
+                        showArticle: 0,
+                        article: res.data[0]
                     });
-                    console.log("Initializing this.state.metadatas")
-                    console.log(this.state.metadatas)
                 }   
                     
             })
@@ -197,208 +146,76 @@ class ImportRecord extends Component {
             });
     }
     
-    stage2handleSubmit = (event) => {
-        // event.preventDefault();
-        console.log("\n\n\n\n\nsubmitting the form")
-        // this.setState({
-        //     loading: true,
-        // })  
-        console.log(this.updateArticlesMetadata())
-        // axios
-        //     .post("http://localhost:8080/article/import", {
-        //         stage: 2,
-        //         editedImportDataList: this.updateArticlesMetadata(),
-        //     })
-        //     .then((res) => {                 
-        //         console.log("Response:")
-        //         console.log(res.data)    
-        //         this.setState({
-        //             loading: false,
-        //         })        
-        //     })
-        //     .catch((err) => {
-        //         console.log("ERR:")
-        //         console.table(err)
-        //         console.info(err.response)
-        //         this.setState({
-        //             loading: false,
-        //         })
-        //     });
-    
-    }
-    
-    updateArticlesMetadata = () => {
-        for (let i = 0; i < this.state.metadatas.length; i++){
-            let metadata = {}
-            console.log("Merging metadata for article "+i)
-            this.state.metadatas[i].forEach(([key, value], fieldIndex) => {
-                console.log(`${key}: ${value} CIMMMI`);
-                metadata[key] = value;
-            })
-            this.setState(({articles})=>{
-                articles[i].metadata = metadata
-                return{
-                    articles: articles
-                }
-            })
-        }
-        
-
-        
-        return this.state.articles
-        // console.log("articles after")
-        // console.log(this.state.articles)
-    }
-
-    renderMetadata = (articleIndex) => {
-        let metadataFields = [];
-        this.state.metadatas[articleIndex].forEach(([key, value], fieldIndex) => {
-            metadataFields.push(
-                <div style={{   
-                    display:"flex",
-                    width: "100%",
-                    margin:"7px 0",
-                    alignItems: "flex-start",
-                    flexWrap: "wrap",
-                    justifyContent: 'space-between',
-                    // backgroundColor: "blue",
-                }} key={`A_${articleIndex}_F_${fieldIndex}`}>
-                    <TextField
-                        multiline = {true}
-                        name={`metadatas[${articleIndex}][${fieldIndex}][0]`}
-                        value={this.state.metadatas[articleIndex][fieldIndex][0]}
-                        onChange={(e)=>{this.handleFieldUpdate(e, articleIndex, fieldIndex, 0)}}
-                        style={{
-                            width: "30%",
-                            alignSelf: "flex-start"
-                        }} />
-                    <TextField 
-                        multiline = {true}
-                        name={`metadatas[${articleIndex}][${fieldIndex}][1]`}
-                        value={this.state.metadatas[articleIndex][fieldIndex][1]}
-                        onChange={(e)=>{this.handleFieldUpdate(e, articleIndex, fieldIndex, 1)}}
-                        style={{
-                            maxWidth: "60%",
-                            minWidth: "60%",
-                            alignSelf: "center",
-                            backgroundColor:"#b2dfdb",
-                        }} />
-                </div>
-            )
-        });
-        return metadataFields;
-    }
-
-    renderAuthorsField = (articleIndex) => {
-        console.log("this.state.authors[articleIndex]")
-        console.log(this.state.authors[articleIndex])
-        let authorFields = [];
-        this.state.authors[articleIndex].forEach((author, fieldIndex) => {
-            console.log("fieldIndex: "+fieldIndex)
-            authorFields.push(
-                // <div style={{backgroundColor: "red"}}>
-                    <TextField style={{
-                        // marginTop:"50px"
-                    }} label={`Author ${fieldIndex+1}`} name={`authors[${articleIndex}][${fieldIndex}]`} value={this.state.authors[articleIndex][fieldIndex]}/>
-                // </div>
-            )
+    stage2handleSubmit = (article) => {
+        console.log("\n\n\n\n\nsubmitting the form 2")
+        this.setState((prevState)=>{
+            prevState.article = article
+            prevState.articles[this.state.showArticle] = article
+            return { 
+                articles: prevState.articles,
+                article: article,
+                loading: true,
+            }
         })
-        return authorFields
+        console.log("About to submit articles:")
+        console.log(this.state.articles)
+
+        axios
+            .post("http://localhost:8080/article/import", {
+                stage: 2,
+                editedImportDataList: this.state.articles,
+            })
+            .then((res) => {                 
+                console.log("Response:")
+                console.log(res.data)    
+                console.log(res)    
+                this.setState({
+                    loading: false,
+                })  
+                this.showSuccess()   
+            })
+            .catch((err) => {
+                console.log("ERR:")
+                console.table(err)
+                console.info(err.response)
+                this.setState({
+                    loading: false,
+                })
+            });
+    
     }
 
-    renderMandatoryData = (articleIndex) => {
-        const { classes } = this.props;
 
-        // console.log("Titttttle: "+this.state["[articles][0][title]"])
-        return (
-            <div style={{   
-                display:"flex",
-                width: "100%",
-                margin:"7px 0",
-                flexDirection: "column",
-                // alignItems: "flex-start",
-                flexWrap: "wrap",
-                // justifyContent: 'space-between',
-                // backgroundColor: "blue",
-            }}>
-                {this.state.articles[articleIndex].title !== undefined && 
-                    <div style={{   
-                        display:"flex",
-                        width: "100%",
-                        margin:"7px 0",
-                        alignItems: "flex-start",
-                        flexWrap: "wrap",
-                        justifyContent: 'space-between',
-                        // backgroundColor: "blue",
-                    }}>
-                        <TextField 
-                            multiline = {true}
-                            name= "title"
-                            label= "Title"
-                            value={this.state.articles[articleIndex].title}
-                            onChange={(e)=>{this.handleMandatoryFieldChange(e, articleIndex)}}
-                            style={{
-                                width: "100%",
-                                alignSelf: "center",
-                                backgroundColor:"#b2dfdb",
-                            }} />
-                    </div>
-                }
-                {/* <h3>{article.title}</h3> */}
-                {this.state.articles[articleIndex].authors && <div><strong>Authors:</strong> {this.state.articles[articleIndex].authors.join(", ")}</div>}
-                <div className={classes.mandatoryField}>
-                    {this.renderAuthorsField(articleIndex)}
-                </div>
-                {this.state.articles[articleIndex].year !== undefined && 
-                    <div style={{   
-                        display:"flex",
-                        width: "100%",
-                        margin:"7px 0",
-                        alignItems: "flex-start",
-                        flexWrap: "wrap",
-                        justifyContent: 'space-between',
-                        // backgroundColor: "blue",
-                    }}>
-                        <TextField 
-                            name= "year"
-                            label= "Year"
-                            value={this.state.articles[articleIndex].year}
-                            onChange={(e)=>{this.handleMandatoryFieldChange(e, articleIndex)}}
-                            style={{
-                                width: "100%",
-                                alignSelf: "center",
-                                backgroundColor:"#b2dfdb",
-                            }} />
-                    </div>
-                }
-                {/* {this.state.articles[articleIndex].year && <div><strong>Year:</strong> {this.state.articles[articleIndex].year}</div>} */}
-                {this.state.articles[articleIndex].doi && <div><strong>DOI:</strong> {this.state.articles[articleIndex].doi}</div>}
-                {this.state.articles[articleIndex].url !== undefined && 
-                    <div style={{   
-                        display:"flex",
-                        width: "100%",
-                        margin:"7px 0",
-                        alignItems: "flex-start",
-                        flexWrap: "wrap",
-                        justifyContent: 'space-between',
-                        // backgroundColor: "blue",
-                    }}>
-                        <TextField 
-                            name= "url"
-                            label= "URL"
-                            value={this.state.articles[articleIndex].url}
-                            onChange={(e)=>{this.handleMandatoryFieldChange(e, articleIndex)}}
-                            style={{
-                                width: "100%",
-                                alignSelf: "center",
-                                backgroundColor:"#b2dfdb",
-                            }} />
-                    </div>
-                }
-                {/* {this.state.articles[articleIndex].url && <div><strong>URL:</strong> {this.state.articles[articleIndex].url}</div>} */}
-        </div>
-        )
+    previousNextArticle = (number, article) => {
+        // console.log(`current showArticle value = ${this.state.showArticle}, while future value is ${number}`)
+        this.setState((prevState)=>{
+            prevState.article = article
+            prevState.articles[this.state.showArticle] = article
+            return { 
+                articles: prevState.articles,
+                article: prevState.articles[number],
+                showArticle: number,
+            }
+        })
     }
+
+    showSuccess = () =>{
+        this.setState({stage: 3, timer: 5});
+        var countdown = setInterval(()=>{
+            if(this.state.timer < 1) {
+                clearInterval(countdown);
+                return this.props.history.push('/profile')
+            }
+            this.setState((prevState)=>({
+                timer: prevState.timer-1,
+            }));
+        }, 1000)
+    }
+
+    deleteArticle = () => {
+
+    }
+
 
     render(){
         const { classes } = this.props;
@@ -408,69 +225,61 @@ class ImportRecord extends Component {
                 <Typography variant="h6">Import a record:</Typography>
             </Container>
             <Paper elevation={7} className={classes.formCard}>
-                {this.state.stage}
                 {(this.state.stage === 1) &&
-                    <div>
-                        <form onSubmit={this.handleSubmit}  className={classes.formField}>
+                    <div style={{
+                        width:"100%",
+                        display:"flex",
+                        flexDirection: "column",
+                    }}>
+                        {/* <form onSubmit={this.handleSubmit}  className={classes.formField}> */}
                             <Typography variant="body2">
                                 Paste your BibTeX text into the input field below.
                             </Typography>
                             <FormControl error={this.state.errors.bibtex ? true : false} className={classes.searchContainer}  >
-                                <TextareaAutosize name="bibtex" onChange={this.handleChange} value={this.state.bibtex} aria-label="empty textarea" placeholder="BibTex" style={{borderColor: (this.state.errors.bibtex && "red") , maxWidth: "100%",}}/>
+                                <TextareaAutosize rowsMin={3} name="bibtex" onChange={this.handleChange} value={this.state.bibtex} aria-label="empty textarea" 
+                                    placeholder="BibTex" style={{borderColor: (this.state.errors.bibtex && "red"), maxWidth: "100%",}}/>
                                 <FormHelperText id="component-helper-text">{ this.state.errors.bibtex }</FormHelperText>
                             </FormControl>
-                            <Button disabled={this.state.loading} variant="contained" color="primary" onClick={this.stage1handleSubmit} style={{marginRight: "0",
+                            <Button disabled={this.state.loading} variant="contained" color="primary" onClick={this.stage1handleSubmit} style={{
+                                marginRight: "0",
                                 // marginLeft: "auto",
                                 alignSelf: "flex-start",  
                                 marginTop: "3px",
-                                // height: "minContent"
-                                }}>
+                            }}>
                                 Parse BibTeX
                             </Button>
-                        </form>
+                        {/* </form> */}
                     </div>
                 }
 
-                {(this.state.stage !== 1) && (this.state.articles.length !== 0) &&
-                    <div>
-                        {console.log("this.state.articles[this.state.stage]")}
-                        {console.log(this.state.articles[this.state.stage])}
-                        {console.log("this.state.stage")}
-                        {console.log(this.state.stage)}
-                        <EditableArticleCard name={`article_1`} article={this.state.articles[0]}/>
-                    </div>
-                }
-
-                {(this.state.stage !== 1) && (this.state.articles.length !== 0) ?
-                    (<Button disabled={this.state.loading} variant="contained" color="primary" onClick={this.stage2handleSubmit} style={{marginRight: "0",
-                        // marginLeft: "auto",
-                        alignSelf: "flex-start",  
-                        marginTop: "3px",
-                        // height: "minContent"
-                        }}>
-                        Save
-                    </Button>) : null
+                {(this.state.stage === 2) && this.state.articles.map((article, index)=>{
+                    if(index === this.state.showArticle){
+                        return (
+                        <EditableArticleCard 
+                            key={`A_${index}`}
+                            numOfArticles={this.state.articles.length}
+                            previousNextArticle={this.previousNextArticle} 
+                            articleNumber={index}
+                            article={article}
+                            submitArticles={this.stage2handleSubmit}
+                            deleteArticle={this.deleteArticle}
+                        /> 
+                    )}
+                })}
+                {this.state.stage === 3 && 
+                    <Container className={classes.successContainer}>
+                        <Alert variant="filled" severity="success">
+                            <AlertTitle>Success!</AlertTitle>
+                            The BibTeX records have been successfully added! You will be redirected to the Profile page in <strong>{this.state.timer}</strong>
+                        </Alert>
+                    </Container>
                 }
             </Paper>
         </div>
     )}
-
-//     this.state.articles.map((article, index) => (
-//         <ArticleCard name={"article_"+index} key={index} article={article}/>
-//     ))
-
-    // Object.keys(article.metadata).map((key, index)=> (
-    //     <h2>{key}</h2>
-    // ));
-    // for (const [key, value] of Object.entries(article.metadata)) {
-    //     console.log(`${key}: ${value}`);
-    // }
-    
-    // <>
-    //     <EditableArticleCard name={"article_"+index} key={index} article={article}/>
-    // </>
-
 }
+
+
 
 ImportRecord.propTypes = {
     classes: PropTypes.object.isRequired,

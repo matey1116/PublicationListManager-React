@@ -33,7 +33,7 @@ const styles = theme => ({
         width: "235px"
     },
     textContainer: {
-        maxWidth: "550px",
+        maxWidth: "800px",
         margin: "auto",
         marginTop:"40px",
         marginBottom: "20px",
@@ -76,12 +76,12 @@ class ImportRecord extends Component {
             // bibtex: "",
             bibtex: "",
             articles: [],
-            metadatas: [],
-            authors: [],
             collapseResults: true,
             errors: {},
             stage: 1,
             loading: false,
+            showArticle: -1,
+            article: {}
         };   
         this.renderMetadata = this.renderMetadata.bind(this);
         
@@ -154,35 +154,19 @@ class ImportRecord extends Component {
                 bibtex: this.state.bibtex,
             })
             .then((res) => {                 
-                let metadatas = []
-                let authors = []
-                console.log("res.status")
-                console.log(res.status)
                 if(res.data === "All articles from BiBTeX are already imported"){
                     return this.setErrorMsg("bibtex", "All articles from BiBTeX are already imported")
                 }
                 console.log("res.data")
                 console.log(res.data)
                 if(res.status === 200){
-                    res.data.map((article, index) => {
-                        article.authors === undefined ? 
-                            authors.push({}) 
-                            :
-                            authors.push(article.authors) 
-                        article.metadata === undefined ? 
-                            metadatas.push({}) 
-                            :
-                            metadatas.push(Object.entries(article.metadata)) 
-                    })
                     this.setState({
                         articles: res.data,
                         loading: false,
                         stage: 2,
-                        metadatas: metadatas,
-                        authors: authors,
+                        showArticle: 0,
+                        article: res.data[0]
                     });
-                    console.log("Initializing this.state.metadatas")
-                    console.log(this.state.metadatas)
                 }   
                     
             })
@@ -400,6 +384,64 @@ class ImportRecord extends Component {
         )
     }
 
+    previousNextArticle = (number, article) => {
+        console.log(`current showArticle value = ${this.state.showArticle}, while future value is ${number}`)
+         this.setState((prevState)=>{
+            console.log("\n\n\nArticle submitted: ")
+            console.log(prevState.article)
+            prevState.article = article
+            prevState.articles[this.state.showArticle] = article
+            return { 
+                articles: prevState.articles,
+                article: prevState.articles[number],
+                showArticle: number,
+            }
+        })
+        console.log("Updated articles")
+        console.log(this.state.articles)
+        console.log("Newly chosen article")
+        console.log(this.state.article)
+
+                    
+        // this.setState(({articles})=>{
+            // console.log("\n\n\nArticle submitted: ")
+            // console.log(article)
+            // articles[this.state.showArticle] = article
+            // return { articles: articles }
+        // })
+        // this.setState({showArticle: number})   
+        // this.forceUpdate();
+        
+        // switch(operation){
+        //     case "next":
+                // this.setState(prevState => {
+                //     return {showArticle: prevState.showArticle + number}
+                //  })
+                // break;
+            // case "previous":
+                // this.setState(prevState => {
+                    // return {showArticle: prevState.showArticle - 1}
+                //  })
+                // break;
+        // }
+    }
+
+    renderArticle = () => {
+        console.log("rendering Article " + this.state.showArticle )
+        // this.forceUpdate();
+        
+        return (
+            <EditableArticleCard 
+                // articles={this.state.articles}
+                numOfArticles={this.state.articles.length}
+                previousNextArticle={this.previousNextArticle} 
+                articleNumber={this.state.showArticle} 
+                article={this.state.article}
+            />  
+        )
+    }
+
+
     render(){
         const { classes } = this.props;
         return (
@@ -408,70 +450,46 @@ class ImportRecord extends Component {
                 <Typography variant="h6">Import a record:</Typography>
             </Container>
             <Paper elevation={7} className={classes.formCard}>
-                {this.state.stage}
+                {this.state.showArticle}
                 {(this.state.stage === 1) &&
-                    <div>
-                        <form onSubmit={this.handleSubmit}  className={classes.formField}>
+                    <div style={{
+                        width:"100%",
+                        display:"flex",
+                        flexDirection: "column",
+                    }}>
+                        {/* <form onSubmit={this.handleSubmit}  className={classes.formField}> */}
                             <Typography variant="body2">
                                 Paste your BibTeX text into the input field below.
                             </Typography>
                             <FormControl error={this.state.errors.bibtex ? true : false} className={classes.searchContainer}  >
-                                <TextareaAutosize name="bibtex" onChange={this.handleChange} value={this.state.bibtex} aria-label="empty textarea" placeholder="BibTex" style={{borderColor: (this.state.errors.bibtex && "red") , maxWidth: "100%",}}/>
+                                <TextareaAutosize rowsMin={3} name="bibtex" onChange={this.handleChange} value={this.state.bibtex} aria-label="empty textarea" 
+                                    placeholder="BibTex" style={{borderColor: (this.state.errors.bibtex && "red"), maxWidth: "100%",}}/>
                                 <FormHelperText id="component-helper-text">{ this.state.errors.bibtex }</FormHelperText>
                             </FormControl>
-                            <Button disabled={this.state.loading} variant="contained" color="primary" onClick={this.stage1handleSubmit} style={{marginRight: "0",
+                            <Button disabled={this.state.loading} variant="contained" color="primary" onClick={this.stage1handleSubmit} style={{
+                                marginRight: "0",
                                 // marginLeft: "auto",
                                 alignSelf: "flex-start",  
                                 marginTop: "3px",
-                                // height: "minContent"
-                                }}>
+                            }}>
                                 Parse BibTeX
                             </Button>
-                        </form>
+                        {/* </form> */}
                     </div>
                 }
 
-                {(this.state.stage !== 1) && (this.state.articles.length !== 0) &&
-                    this.state.articles.map((article, index) => {
-                        return (
-                            <div key={"article_"+index}>
-                                
-                                <EditableArticleCard name={"article_"+index} key={index} article={article}/>
-                                {this.renderMandatoryData(index)}
-                                {this.renderMetadata(index)}
-                            </div>
-                        )
-                    })
-                }
-                {(this.state.stage !== 1) && (this.state.articles.length !== 0) ?
-                    (<Button disabled={this.state.loading} variant="contained" color="primary" onClick={this.stage2handleSubmit} style={{marginRight: "0",
-                        // marginLeft: "auto",
-                        alignSelf: "flex-start",  
-                        marginTop: "3px",
-                        // height: "minContent"
-                        }}>
-                        Save
-                    </Button>) : null
-                }
+                {/* {(this.state.stage !== 1) && (this.state.articles.length !== 0) && */}
+                {(this.state.showArticle !== -1) ? this.renderArticle(this.state.showArticle) 
+
+                
+                 : null} 
+                               
+                        
+                {/* } */}
+                {/* this.renderArticle(this.state.showArticle) */}
             </Paper>
         </div>
     )}
-
-//     this.state.articles.map((article, index) => (
-//         <ArticleCard name={"article_"+index} key={index} article={article}/>
-//     ))
-
-    // Object.keys(article.metadata).map((key, index)=> (
-    //     <h2>{key}</h2>
-    // ));
-    // for (const [key, value] of Object.entries(article.metadata)) {
-    //     console.log(`${key}: ${value}`);
-    // }
-    
-    // <>
-    //     <EditableArticleCard name={"article_"+index} key={index} article={article}/>
-    // </>
-
 }
 
 ImportRecord.propTypes = {
