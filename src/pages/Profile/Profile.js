@@ -76,6 +76,7 @@ class Profile extends Component {
             },
         });
     };
+
     setErrorMsg = (fieldName, message) =>{   
         this.setState((prevState) => ({
             errors: {
@@ -85,14 +86,15 @@ class Profile extends Component {
         }))
         return false;
     }
+
     componentDidMount(){
         axios
             .get("http://localhost:8080/account/providers")
             .then((res) => {
                 let providers = []
-                console.log(res.data)
+                // console.log(res.data)
                 if (!res.data.Providers){
-                    console.log("there are providers")
+                    // console.log("there are providers")
                     for (const [providerName, providerURL] of Object.entries(res.data)) {
                         console.log(`${providerName}:  ${providerURL}`);
                         providers.push({
@@ -100,7 +102,7 @@ class Profile extends Component {
                             providerURL: providerURL
                         })
                     }
-                    console.log(providers)
+                    // console.log(providers)
                     this.setState({
                         providers: providers,
                         // providers: [],
@@ -117,7 +119,7 @@ class Profile extends Component {
         axios
             .get("http://localhost:8080/account/is2FAenabled")
             .then((res) => {
-                console.log(res.data.enabled)
+                // console.log(res.data.enabled)
                 this.setState({twoFAenabled: res.data.enabled})
             })
             .catch((err) => {
@@ -130,6 +132,7 @@ class Profile extends Component {
         this.setState({openBackdrop: false})
         // setOpen(false);
     };
+    
     handleToggle(){
         this.setState((prevState)=>({
             openBackdrop: !prevState.openBackdrop,
@@ -139,14 +142,12 @@ class Profile extends Component {
 
     render(){
         let tokenData = JSON.parse(atob(axios.defaults.headers.common["Authorization"].split('.')[1]));
-        console.log(tokenData)
         const { classes } = this.props;
         return (
         <div>
             <Container color="primary" className={classes.textContainer}>
                 <Typography variant="h4">Profile:</Typography>
             </Container>
-            {console.log(this.state.providers)}
             <Paper elevation={7} className={classes.formCard}>
                 <div className={classes.fieldsContainer}>
                     

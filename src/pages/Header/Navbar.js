@@ -17,6 +17,7 @@ const loggedInNavLinks = [
   { title: `Home`, path: `/` },
   { title: `Query DBLP`, path: `/queryDBLP` },
   { title: `Profile`, path: `/profile` },
+  { title: `Records`, path: `/records` },
   { title: `Import record`, path: `/importRecord` },
 ]
 const loggedOutNavLinks = [

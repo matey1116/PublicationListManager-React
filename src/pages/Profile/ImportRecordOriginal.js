@@ -7,7 +7,7 @@ import axios from "axios";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
 
-import EditableArticleCard from './EditableArticleCard';
+import EditableArticleCard from '../EditableArticleCard';
 
 const styles = theme => ({
     formCard: {
