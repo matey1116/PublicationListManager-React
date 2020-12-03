@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
-import { FormControlLabel, Checkbox, Backdrop, Collapse, Button, Container, Typography, Paper } from "@material-ui/core";
+import { Collapse, Button, Typography, Paper } from "@material-ui/core";
 import {  Link, FormControl, FormHelperText, InputLabel, InputAdornment, Input, IconButton, TextField} from "@material-ui/core";
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import axios from "axios";
 import CancelIcon from '@material-ui/icons/Cancel';
 
-import CloseIcon from '@material-ui/icons/Close';
 import AppleIcon from '@material-ui/icons/Apple';
 import AndroidIcon from '@material-ui/icons/AndroidOutlined';
-import { Alert, AlertTitle } from "@material-ui/lab";
 
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';

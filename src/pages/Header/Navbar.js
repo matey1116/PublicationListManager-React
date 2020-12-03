@@ -9,6 +9,7 @@ import SideDrawer from "./SideDrawer"
 import MenuLinks from "./MenuLinks"
 import BackToTop from "./BackToTop";
 import { Link } from "react-router-dom";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 // import { useTheme } from '@material-ui/core/styles';
 import axios from 'axios';
 
@@ -60,21 +61,8 @@ const Navbar = (props) => {
     delete axios.defaults.headers.common["Authorization"];
     props.setLoggedIn(false)
   }
-//   const checkAccess = () => {
-//     const bearer = axios.defaults.headers.common["Authorization"];
-//     try {
-//         if (bearer) {
-//             if (jwt.verify(bearer.split("Bearer ")[1], publicKey).access === 1) {
-//                 console.log("access 1");
-//                 return true;
-//             }
-//         }
-//         return false;
-//     } catch (err) {console.log(err)}
-// };
-  // const theme = useTheme();
   const classes = useStyles();
-
+  const xxsScreen = useMediaQuery('(max-width:390px)');
   return (
     <div>
     <HideOnScroll>
@@ -91,9 +79,12 @@ const Navbar = (props) => {
             }}>
               <Home fontSize="large" />
               <Typography variant="h6">
-                <Hidden only={['xxs']}>           
+                {!xxsScreen && 
+                    <>Publication List Manager</>
+                }
+                {/* <Hidden only={['xxs']}>           
                     Publication List Manager
-                </Hidden>
+                </Hidden> */}
                 <Hidden xsUp>           
                     PLM
                 </Hidden>

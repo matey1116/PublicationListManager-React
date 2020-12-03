@@ -21,7 +21,7 @@ const useStyles = makeStyles({
     },   
 });
 
-function Disable2FA({handleClose, change2faEnabled, ... rest}) {
+function Disable2FA({handleClose, change2faEnabled, ...rest}) {
     const classes = useStyles();
     function handleSubmit(){
         console.log("submitting")

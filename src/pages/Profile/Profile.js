@@ -1,12 +1,11 @@
 import React, {Component} from "react";
-import { Dialog, Backdrop, Collapse, Button, Container, Typography, Paper } from "@material-ui/core";
+import { Dialog, Collapse, Button, Container, Typography, Paper } from "@material-ui/core";
 import axios from "axios";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
 import LogInProviders from './LogInProviders'
 import Toggle2FA from './Toggle2FA'
 import Disable2FA from './Disable2FA'
-import CancelIcon from '@material-ui/icons/Cancel';
 
 const styles = theme => ({
     formCard: {

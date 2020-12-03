@@ -1,15 +1,13 @@
 import React, { Component } from "react";
-import { Button, Link, Container, Typography, Paper, FormControl, FormHelperText, InputLabel, InputAdornment, Input, IconButton, TextField} from "@material-ui/core";
-import { Visibility, VisibilityOff } from '@material-ui/icons';
-import axios from "axios";
+import { Button, Typography, IconButton, TextField} from "@material-ui/core";
 import { withStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
-import { Link as routingLink } from "react-router-dom";
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Alert from '@material-ui/lab/Alert';
+
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 const styles = theme => ({
     articleContainer: {
@@ -58,14 +56,9 @@ export class EditableArticleCard extends Component {
             metadata: Object.entries(props.article.metadata) || [],
             mandatoryFieldError: "",
             metadataFieldError: "",
+            loading: false,
         };
     }
-
-    handleChange = (event) => {
-        this.setState({
-            [event.target.name]: event.target.value,
-        });
-    };
 
     addAuthor = () => {
         this.setState(prevState => ({
@@ -75,7 +68,7 @@ export class EditableArticleCard extends Component {
 
     removeAuthor = index => {
         this.setState((prevState) => ({
-            authors: prevState.authors.filter((_, i) => i != index)
+            authors: prevState.authors.filter((_, i) => i !== index)
         }));
     }
 
@@ -101,7 +94,7 @@ export class EditableArticleCard extends Component {
 
     removeMetadata = index => {
         this.setState((prevState) => ({
-            metadata: prevState.metadata.filter((_, i) => i != index)
+            metadata: prevState.metadata.filter((_, i) => i !== index)
         }));
     }
 
@@ -184,6 +177,7 @@ export class EditableArticleCard extends Component {
     }
 
     buildArticleObject = () => {
+        this.setState({loading:true})
         let metadata = {}
         this.state.metadata.forEach(([key, value], fieldIndex) => {
             metadata[key] = value;
@@ -257,6 +251,7 @@ export class EditableArticleCard extends Component {
                 <div className={classes.prevNextButtonContainer}>
                     {this.props.articleNumber !== 0 ? (
                         <Button variant="outlined" color="primary"
+                        disabled={this.state.loading}
                         onClick={()=>{
                             if(this.validateFields()) this.props.previousNextArticle(this.props.articleNumber-1, this.buildArticleObject())
                         }} >
@@ -265,6 +260,7 @@ export class EditableArticleCard extends Component {
                     ) : <></>}
                     {this.props.articleNumber+1 < this.props.numOfArticles ? (
                         <Button variant="outlined" color="primary"
+                        disabled={this.state.loading}
                         onClick={()=>{
                             if(this.validateFields()) this.props.previousNextArticle(this.props.articleNumber+1, this.buildArticleObject())
                         }}>
@@ -299,4 +295,3 @@ EditableArticleCard.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 export default withStyles(styles)(EditableArticleCard);
-

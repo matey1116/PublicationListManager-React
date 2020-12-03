@@ -222,7 +222,7 @@ class ImportRecord extends Component {
         return (
         <div>
             <Container color="primary" className={classes.textContainer}>
-                <Typography variant="h6">Import a record:</Typography>
+                <Typography variant="h6">Import records from BibTeX</Typography>
             </Container>
             <Paper elevation={7} className={classes.formCard}>
                 {(this.state.stage === 1) &&
