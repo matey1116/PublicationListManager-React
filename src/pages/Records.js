@@ -7,8 +7,11 @@ import CloseIcon from '@material-ui/icons/Close';
 import axios from "axios";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
+import ShareIcon from '@material-ui/icons/Share';
+import LaunchIcon from '@material-ui/icons/Launch';
 
 import ExportWindow from './ExportWindow';
+import ShareWindow from './ShareWindow';
 import ArticleCard from './ArticleCard';
 
 const styles = theme => ({
@@ -146,32 +149,6 @@ class Records extends Component {
             })
     }
 
-    previousNextArticle = (number, article) => {
-        // console.log(`current showArticle value = ${this.state.showArticle}, while future value is ${number}`)
-        this.setState((prevState)=>{
-            prevState.article = article
-            prevState.articles[this.state.showArticle] = article
-            return { 
-                articles: prevState.articles,
-                article: prevState.articles[number],
-                showArticle: number,
-            }
-        })
-    }
-
-    showSuccess = () =>{
-        this.setState({stage: 3, timer: 5});
-        var countdown = setInterval(()=>{
-            if(this.state.timer < 1) {
-                clearInterval(countdown);
-                return this.props.history.push('/profile')
-            }
-            this.setState((prevState)=>({
-                timer: prevState.timer-1,
-            }));
-        }, 1000)
-    }
-
     toggleCheckbox = (event, article_id) => {
         console.log(this.state.checkedCheckboxes)
         if(event.target.checked){
@@ -181,12 +158,14 @@ class Records extends Component {
                 }
             })
         }
-        this.setState(({checkedCheckboxes}) => {
-            checkedCheckboxes.delete(article_id)
-            return {
-                checkedCheckboxes: checkedCheckboxes,
-            }
-        })
+        else{
+            this.setState(({checkedCheckboxes}) => {
+                checkedCheckboxes.delete(article_id)
+                return {
+                    checkedCheckboxes: checkedCheckboxes,
+                }
+            })
+        }
     }
 
     showCheckboxes = (action) => {
@@ -224,6 +203,16 @@ class Records extends Component {
         return {articles: chosenArticles, articleTypes: articleTypes}    
     }
 
+    getListChosenArticles = () => {
+        let chosenArticles = []
+        this.state.checkedCheckboxes.forEach(articleIndex => {
+            chosenArticles.push(this.state.articles[articleIndex]._id)
+        });
+        console.log("sharing articles")
+        console.log(chosenArticles)
+        return chosenArticles
+    }
+
     render(){
         const { classes } = this.props;
         return (
@@ -235,7 +224,7 @@ class Records extends Component {
             <Dialog onEscapeKeyDown={this.handleClose} open={this.state.readyToSubmit}>
                 {this.state.action === "export" ?
                     <ExportWindow data={this.getChosenArticles()} handleClose={()=>{this.handleClose()}}/> :
-                    <h1>Sharing articles</h1>
+                    <ShareWindow articles={this.getListChosenArticles()} handleClose={()=>{this.handleClose()}}/>
                 }
             </Dialog>
 
@@ -247,8 +236,14 @@ class Records extends Component {
                 {/* <Collapse in={!this.state.showCheckboxes} component="div"> */}
                 {this.state.articles !== [] && 
                     <div>    
-                        <Button name="share" disabled={this.state.showCheckboxes} className={classes.submit_shareButtons} onClick={()=>{this.showCheckboxes("share")}} color="primary" variant="contained">Share</Button>
-                        <Button name="export" disabled={this.state.showCheckboxes} className={classes.submit_shareButtons} onClick={()=>{this.showCheckboxes("export")}} color="primary" variant="contained">Export</Button>
+                        <Button name="share" disabled={this.state.showCheckboxes} className={classes.submit_shareButtons} 
+                            onClick={()=>{this.showCheckboxes("share")}} color="primary" variant="contained">
+                            <ShareIcon/>  Share
+                        </Button>
+                        <Button name="export" disabled={this.state.showCheckboxes} className={classes.submit_shareButtons} 
+                            onClick={()=>{this.showCheckboxes("export")}} color="primary" variant="contained">
+                            <LaunchIcon/>  Export
+                        </Button>
                     </div>  
                 }
                 <Collapse in={this.state.errorText !== ""}>
@@ -266,7 +261,7 @@ class Records extends Component {
                     <Typography variant="body1">
                         Choose the records you would like to {this.state.action}.
                     </Typography>  
-                    <Button className={classes.submit_shareButtons} color="primary" variant="contained"
+                    <Button className={classes.submit_shareButtons} color="primary" variant="outlined"
                         onClick={()=>{this.setState({
                             showCheckboxes: false,
                             checkedCheckboxes: new Set([]),

@@ -40,7 +40,7 @@ const useStyles = makeStyles({
     }
 });
 
-function ExportWindow({handleClose, data, change2faEnabled, ...rest}) {
+function ExportWindow({handleClose, data, ...rest}) {
     const bibtexTypes = ["article", "book", "booklet", "conference", "inbook",
         "incollection", "inproceedings", "manual", "mastersthesis", "misc",
         "phdthesis", "proceedings", "techreport", "unpublished"
