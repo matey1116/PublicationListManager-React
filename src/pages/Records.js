@@ -219,9 +219,9 @@ class Records extends Component {
         this.state.checkedCheckboxes.forEach(articleIndex => {
             chosenArticles.push(this.state.articles[articleIndex])
             let id = this.state.articles[articleIndex]._id
-            articleTypes[id] = ""
+            articleTypes[id] = "article"
         });
-        return {chosenArticles: chosenArticles, articleTypes: articleTypes}    
+        return {articles: chosenArticles, articleTypes: articleTypes}    
     }
 
     render(){
@@ -232,7 +232,7 @@ class Records extends Component {
                 <Typography variant="h6">Records: </Typography>
             </Container>
 
-            <Dialog open={this.state.readyToSubmit}>
+            <Dialog onEscapeKeyDown={this.handleClose} open={this.state.readyToSubmit}>
                 {this.state.action === "export" ?
                     <ExportWindow data={this.getChosenArticles()} handleClose={()=>{this.handleClose()}}/> :
                     <h1>Sharing articles</h1>
