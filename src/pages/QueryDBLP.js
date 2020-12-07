@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import { Collapse, CircularProgress, FormLabel, 
+import {Checkbox, Collapse, CircularProgress, FormLabel, 
     FormControlLabel, RadioGroup, Radio, Button, Container, 
     Typography, Paper, FormControl, TextField} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
@@ -63,91 +63,33 @@ const styles = theme => ({
     },
 })
 
-const doneArticles = [
-    {
-        abstract: null,
-        authors: ["Stefan Edelkamp", "Armin Weiß", "Sebastian Wild"],
-        doi: "10.1007/S00453-019-00634-0",
-        ee: "https://doi.org/10.1007/s00453-019-00634-0",
-        key: "journals/algorithmica/EdelkampWW20",
-        number: "3",
-        pages: "509-588",
-        title: "QuickXsort - A Fast Sorting Scheme in Theory and Practice.",
-        type: "Journal Articles",
-        url: "https://dblp.org/rec/journals/algorithmica/EdelkampWW20",
-        venue: "Algorithmica",
-        volume: "82",
-        year: "2020",
-    },
-    {
-        abstract: null,
-        authors: ["Meng He 0001", "J. Ian Munro", "Yakov Nekrich", "Sebastian Wild", "Kaiyu Wu"],
-        doi: null,
-        ee: "https://arxiv.org/abs/2005.07644",
-        key: "journals/corr/abs-2005-07644",
-        number: null,
-        pages: null,
-        title: "Breadth-First Rank/Select in Succinct Trees and Distance Oracles for Interval Graphs.",
-        type: "Informal Publications",
-        url: "https://dblp.org/rec/journals/corr/abs-2005-07644",
-        venue: "CoRR",
-        volume: "abs/2005.07644",
-        year: "2020",
-    },
-    {
-        abstract: null,
-        authors: ["Konstantinos Tsakalidis", "Sebastian Wild", "Viktor Zamaraev"],
-        doi: null,
-        ee: "https://arxiv.org/abs/2010.04108",
-        key: "journals/corr/abs-2010-04108",
-        number: null,
-        pages: null,
-        title: "Succinct Permutation Graphs.",
-        type: "Informal Publications",
-        url: "https://dblp.org/rec/journals/corr/abs-2010-04108",
-        venue: "CoRR",
-        volume: "abs/2010.04108",
-        year: "2020",
-    },
-    {
-        abstract: null,
-        authors: ["Bryce Sandlund", "Sebastian Wild"],
-        doi: null,
-        ee: "https://arxiv.org/abs/2010.08840",
-        key: "journals/corr/abs-2010-08840",
-        number: null,
-        pages: null,
-        title: "Lazy Search Trees.",
-        type: "Informal Publications",
-        url: "https://dblp.org/rec/journals/corr/abs-2010-08840",
-        venue: "CoRR",
-        volume: "abs/2010.08840",
-        year: "2020",
-}]
-
 class QueryDBLP extends Component {
     constructor(props) {
         super(props);
         this.state = {
             searchTerm: "",
             type: "author",
-            // articles: doneArticles,
             articles: [],
             collapseResults: true,
             errors: {},
             loading: false,
-        };   
-        
+            checkedCheckboxes: new Set([]),
+            showSuccess: false,
+        };    
     }
+
     handleChange = (event) => {
+        const {name, value} = event.target
+        console.log("Name "+name+" value "+value)
         this.setState({
-            [event.target.name]: event.target.value,
+            [name]: value,
             errors: {
                 ...this.state.errors,
                 [event.target.name]: null,
             },
         });
     };
+
     setErrorMsg = (fieldName, message) =>{   
         this.setState((prevState) => ({
             errors: {
@@ -157,6 +99,7 @@ class QueryDBLP extends Component {
         }))
         return false;
     }
+
     handleSubmit = (event) => {
         event.preventDefault();
         console.log("submitting the form")
@@ -167,22 +110,19 @@ class QueryDBLP extends Component {
             articles: [],
             errors: {
                 ...prevState.errors,
-                // ["searchResults"]: null,
+                ["searchResults"]: null,
             },
             loading: true,
             collapseResults: false,
         }))
-        // setTimeout(()=>{
-            axios
+        axios
             .post("http://localhost:8080/query/dblp", {
                 name: this.state.searchTerm,
                 type: this.state.type,
                 searchOwnRecord: false,
+                liveFetch: true,
             })
             .then((res) => {
-                console.log("Response:")
-                console.log(res.status)
-                console.log(res.data.dblpArticles)
                 if(res.status === 200){
                     this.setState({
                         articles: res.data.dblpArticles,
@@ -192,58 +132,64 @@ class QueryDBLP extends Component {
                 
             })
             .catch((err) => {
-                console.log(err)
-                console.info(err.response)
-                console.log(err.response.data.name)
                 if(err.response.data.publication === "No articles for the given title" || err.response.data.author === "No articles for the given author"){
-                    console.log("handle not found results")
                     this.setErrorMsg("searchResults", "No results for the given term were found! Check your spelling and make sure to capitalize appropriate letters.")
                 }
                 if(err.response.status === 500){
-                    console.log("500 error")
                     this.setErrorMsg("searchResults", "Something went wrong! Please try again!")
                 }
                 this.setState({
                     loading: false,
                 })
             });
-        // }, 3000)
-        // axios
-        //     .post("http://localhost:8080/query/dblp", {
-        //         name: this.state.searchTerm,
-        //         type: this.state.type,
-        //         searchOwnRecord: false,
-        //     })
-        //     .then((res) => {
-        //         this.setState({collapseResults: true,})
-        //         console.log("Response:")
-        //         console.log(res.status)
-        //         console.log(res.data.dblpArticles)
-        //         if(res.status === 200){
-        //             this.setState({
-        //                 articles: res.data.dblpArticles,
-        //                 loading: false,
-        //             });
-        //         }
-                
-        //     })
-        //     .catch((err) => {
-        //         console.log(err)
-        //         console.info(err.response)
-        //         console.log(err.response.data.name)
-        //         if(err.response.data.publication === "No articles for the given title" || err.response.data.author === "No articles for the given author"){
-        //             console.log("handle not found results")
-        //             this.setErrorMsg("searchResults", "No results for the given term were found!")
-        //         }
-        //         if(err.response.status === 500){
-        //             console.log("500 error")
-        //             this.setErrorMsg("searchResults", "Something went wrong! Check your spelling and try again!")
-        //         }
-        //         this.setState({
-        //             collapseResults: true,
-        //             loading: false,
-        //         })
-        //     });
+    }
+
+    toggleCheckbox = (event, index) => {
+        console.log(this.state.checkedCheckboxes)
+        if(event.target.checked){
+            return this.setState(({checkedCheckboxes}) => {
+                return {
+                    checkedCheckboxes: checkedCheckboxes.add(index),
+                }
+            })
+        }
+        else{
+            this.setState(({checkedCheckboxes}) => {
+                checkedCheckboxes.delete(index)
+                return {
+                    checkedCheckboxes: checkedCheckboxes,
+                }
+            })
+        }
+    }
+
+    saveRecords = () => {
+        console.log("saving records")
+        axios
+            .post("http://localhost:8080/query/dblp/save", {
+                dblpArticles: this.getChosenArticles()
+            })
+            .then((res) => {
+                console.log(res)
+                console.log(res.data)
+                this.setState({
+                    articles: [],
+                    showSuccess: true,
+                })
+                this.setErrorMsg("searchResults", "Records have been successfully saved!")
+            })
+            .catch((err) => {
+                console.log(err)
+                console.log(err.response)
+            })
+    }
+
+    getChosenArticles = () => {
+        let chosenArticles = []
+        this.state.checkedCheckboxes.forEach(articleIndex => {
+            chosenArticles.push(this.state.articles[articleIndex])
+        });
+        return chosenArticles
     }
 
     render(){
@@ -253,18 +199,18 @@ class QueryDBLP extends Component {
             <Container color="primary" className={classes.textContainer}>
                 <Typography variant="h6">Query DBLP:</Typography>
             </Container>
+            
             <Paper elevation={7} className={classes.formCard}>
                 <form onSubmit={this.handleSubmit}  className={classes.formField}>
                 <Typography variant="body2">
                     Choose between querying a researcher or a specific research paper.
                     Type in the name of the wanted entity and press on the "Search" button to be presented with results on the given entity.
                 </Typography>
-                
+
                 <RadioGroup row aria-label="search-type" name="type" 
                     value={this.state.type} 
                     defaultValue="top"
                     onChange={this.handleChange}
-                    // style={{backgroundColor:"red"}}
                     >
                     <FormLabel style={{alignSelf: "center", marginRight: "10px"}}>Searching for:</FormLabel>
                     <FormControlLabel value="author" control={<Radio color="primary" />} label="Author" />
@@ -272,9 +218,6 @@ class QueryDBLP extends Component {
                 </RadioGroup>
 
                 <FormControl error={this.state.errors.searchTerm ? true : false} className={classes.searchContainer}  >
-                    {/* <div className={classes.searchIcon}>
-                        <SearchIcon/>
-                    </div> */}
                     <TextField
                         placeholder="Search…"
                         helperText={this.state.errors.searchTerm}
@@ -283,36 +226,69 @@ class QueryDBLP extends Component {
                         onChange={this.handleChange}
                         name="searchTerm"
                         inputProps={{ 'aria-label': 'search' }}
-                        style={{
-                            // marginRight: "auto",
-                            width: "70%"
-                        }}
+                        style={{width: "70%"}}
                     />
                     
-                    <Button disabled={this.state.loading} variant="contained" color="primary" onClick={this.handleSubmit} style={{marginRight: "0",
-                        // marginLeft: "auto",
-                        alignSelf: "flex-start",  
-                        // marginRight: "0",
-                        // height: "minContent"
+                    <Button disabled={this.state.loading} variant="contained" color="primary" onClick={this.handleSubmit} 
+                        style={{
+                            marginRight: "0",
+                            alignSelf: "flex-start",  
                         }}>
                         <SearchIcon/> Search
                     </Button>
-                    </FormControl>
-                    <br/>
+                    
+                </FormControl>
+                <br/>
             </form>
             </Paper>
+
             <Collapse in={!this.state.collapseResults}>
                 <Paper elevation={4} className={classes.resultsCard}>
                     {this.state.loading && 
-                        <CircularProgress style={{
-                          margin: "auto",  
-                        }}/>
+                        <CircularProgress style={{margin: "auto",}}/>
                     }
+
+                    {this.state.articles.length > 0 && !this.state.loading && this.props.loggedIn &&
+                        <Typography variant="h5" style={{marginBottom:"10px"}}>
+                            If you wish to save any of the results, mark the checkbox next to the wanted record and click on the Save button.
+                        </Typography>
+                    }
+
                     {this.state.articles !== [] &&
                         this.state.articles.map((article, index) => (
-                            <ArticleCard name={"article_"+index} key={index} article={article}/>
+                            <div key={index} style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between"
+                            }}>
+                                <ArticleCard name={"article_"+index} key={index} article={article} style={{
+                                    width: "100%",
+                                }}/>
+                                
+                                {this.props.loggedIn ?
+                                    <Checkbox 
+                                        onChange={(e)=>{this.toggleCheckbox(e, index)}}
+                                        checked={this.state.checkedCheckboxes.has(index)}
+                                        style={{height: "min-content"}}
+                                    /> : null
+                                }
+                                
+                            </div>
                     ))}
                     
+                    {this.state.articles.length !== 0 && this.props.loggedIn &&
+                        <Button disabled={this.state.checkedCheckboxes.size === 0 || this.state.loading} color="primary" variant="contained" 
+                        onClick={()=>{this.saveRecords()}} 
+                            style={{
+                                width:"max-content",
+                                marginLeft:"auto",
+                                marginRight: "5%",
+                                marginTop: "30px",
+                            }}>
+                            Save
+                        </Button>
+                    }
+
                     {this.state.articles.length === 0
                         && this.state.errors.searchResults
                         && <h2 style={{margin: "auto"}} >{this.state.errors.searchResults}</h2>

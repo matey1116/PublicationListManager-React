@@ -1,19 +1,11 @@
 import React from 'react'
 import Button from '@material-ui/core/Button';
-import { Collapse, CircularProgress, Typography, InputLabel, Select, MenuItem, TextField, DialogActions } from '@material-ui/core';
+import { Collapse, CircularProgress, Typography, TextField, DialogActions } from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Alert } from '@material-ui/lab';
-
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 
-import { Redirect } from 'react-router-dom'
 import axios from "axios";
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -58,15 +50,12 @@ const useStyles = makeStyles({
 
 function ShareWindow({handleClose, articles, ...rest}) {
     const classes = useStyles();
-    const [stage, setStage] = React.useState(1);
     const [loading, setLoading] = React.useState(true);
-    const [timer, setTimer] = React.useState(0);
     const [shareUrl, setShareUrl] = React.useState("");
     const [linkIsCopied, setLinkIsCopied] = React.useState(false);
     const [error, setError] = React.useState(false);
     
     React.useEffect(() => {
-        console.log("mounting")
         axios
             .post("http://localhost:8080/share/generate", articles)
             .then((res) => {
@@ -80,16 +69,6 @@ function ShareWindow({handleClose, articles, ...rest}) {
             })
     }, []);
 
-    // React.useEffect(() => {
-    //     console.log("In effect")
-    //     stage === 3 && timer > 0 && setTimeout(() => setTimer(timer - 1), 1000);
-    //     if(stage === 3 && timer <= 0) setStage(4) 
-    // }, [timer]);
-
-    function showSuccess(){
-        setStage(3)
-        setTimer(5)
-    }
 
     function copyLink(){
         console.log("copying")

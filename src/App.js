@@ -11,6 +11,7 @@ import home from "./pages/home"
 import QueryDBLP from "./pages/QueryDBLP"
 import ImportRecord from "./pages/ImportRecord"
 import Records from "./pages/Records"
+import ViewRecords from "./pages/ViewRecords"
 import Profile from "./pages/Profile/Profile"
 
 import PrivateRoute from './PrivateRoute'
@@ -84,22 +85,25 @@ function App(props) {
                   margin: "0 auto",
                   maxWidth: "md",
                   paddingTop: "30px",
-                  minHeight: "100vh",
+                  minHeight: "80vh",
                }}
             >
                <Switch>
                   <PrivateRoute exact path="/profile" loggedIn={loggedIn} component={Profile}/>
 
                   {/* These 2 should be private */}
-                  <PublicRoute exact path="/records" component={Records}/>
-                  <PublicRoute exact path="/importRecord" component={ImportRecord}/>
+                  <PrivateRoute exact path="/records" loggedIn={loggedIn} component={Records}/>
+                  <PrivateRoute exact path="/records/view" loggedIn={loggedIn} component={ViewRecords}/>
+                  <PrivateRoute exact path="/importRecord" loggedIn={loggedIn} component={ImportRecord}/>
 
                   <PublicRoute restricted={true} exact path='/login' loggedIn={loggedIn} component={routeProps => <Login {...routeProps} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
                   <PublicRoute restricted={false} exact path='/' component={home} />
                   <PublicRoute restricted={true} exact path='/2fa' component={TwoFactorLogin} />
                   <PublicRoute restricted={true} exact path='/register' component={Register} />
                   <PublicRoute restricted={true} exact path='/activateAccount/:id' component={Activate} />
-                  <PublicRoute restricted={false} exact path='/queryDBLP' component={QueryDBLP} />
+                  {/* <PublicRoute restricted={false} exact path='/queryDBLP' loggedIn={loggedIn} component={QueryDBLP} /> */}
+                  <PublicRoute restricted={false} exact path='/queryDBLP' loggedIn={loggedIn} component={routeProps => <QueryDBLP {...routeProps} loggedIn={loggedIn}/>} />
+
 
                   {/* <Route exact path="/" component={home} /> */}
                   {/* <Route exact path='/login' render={routeProps => <Login {...routeProps} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} /> */}

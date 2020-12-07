@@ -1,8 +1,8 @@
 import React, {Component} from "react";
-import { Dialog, IconButton, Checkbox,
-    Button, Container, Typography, Paper, Collapse
+import { Dialog, IconButton, Checkbox, FormHelperText, TextareaAutosize,
+    Button, Container, Typography, Paper, FormControl, Collapse
     } from "@material-ui/core";
-import { Alert } from '@material-ui/lab';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import CloseIcon from '@material-ui/icons/Close';
 import axios from "axios";
 import PropTypes from 'prop-types';
@@ -96,7 +96,7 @@ const styles = theme => ({
     },
 })
 
-class Records extends Component {
+class ViewRecords extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -303,8 +303,8 @@ class Records extends Component {
 
 
 
-Records.propTypes = {
+ViewRecords.propTypes = {
     classes: PropTypes.object.isRequired,
 };
     
-export default withStyles(styles)(Records);
+export default withStyles(styles)(ViewRecords);

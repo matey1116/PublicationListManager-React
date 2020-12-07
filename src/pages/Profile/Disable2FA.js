@@ -8,21 +8,21 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import axios from "axios";
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles({
-    providerCard:{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: 'center',
-    },
-    linkText: {
-        textDecoration: `none`,
-        textTransform: `uppercase`,
-        color: `white`
-    },   
-});
+// const useStyles = makeStyles({
+//     providerCard:{
+//         display: "flex",
+//         flexDirection: "row",
+//         alignItems: 'center',
+//     },
+//     linkText: {
+//         textDecoration: `none`,
+//         textTransform: `uppercase`,
+//         color: `white`
+//     },   
+// });
 
 function Disable2FA({handleClose, change2faEnabled, ...rest}) {
-    const classes = useStyles();
+    // const classes = useStyles();
     function handleSubmit(){
         console.log("submitting")
         axios
