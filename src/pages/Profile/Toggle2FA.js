@@ -196,7 +196,7 @@ export class Toggle2FA extends Component {
                         </FormControl>
                         <div>
                             <Button variant="contained" color="primary" onClick={this.handleSubmit} style={{marginLeft: "0px", marginTop: "20px"}}>
-                                Disable 2FA
+                                Enable 2FA
                             </Button>
                         </div>
                     </div>

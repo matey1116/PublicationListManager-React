@@ -1,18 +1,16 @@
 import React, {Component} from "react";
-import { Dialog, IconButton, Checkbox, FormHelperText, TextareaAutosize,
-    Button, Container, Typography, Paper, FormControl, Collapse
-    } from "@material-ui/core";
-import { Alert, AlertTitle } from '@material-ui/lab';
+import { Dialog, IconButton, Container, Typography, Paper, Collapse} from "@material-ui/core";
+import { Alert } from '@material-ui/lab';
 import CloseIcon from '@material-ui/icons/Close';
 import axios from "axios";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
-import ShareIcon from '@material-ui/icons/Share';
-import LaunchIcon from '@material-ui/icons/Launch';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/DeleteForever';
 
-import ExportWindow from './ExportWindow';
-import ShareWindow from './ShareWindow';
 import ArticleCard from './ArticleCard';
+import DeleteRecordDialog from './DeleteRecordDialog';
+import EditRecordDialog from './EditRecordDialog';
 
 const styles = theme => ({
     formCard: {
@@ -29,13 +27,6 @@ const styles = theme => ({
             padding: "30px 3px",
         },
     },
-    submit_shareButtons: {
-        margin: "10px 30px"
-    },
-    backdrop: {
-        zIndex: theme.zIndex.drawer + 1,
-        color: '#fff',
-    },  
 
     articleContainer: {
         margin: "10px 0",
@@ -49,50 +40,12 @@ const styles = theme => ({
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        // backgroundColor:"red",
-    },
-
-    formField: {
-        width: "95%",
-        marginTop: "7px",
-        display: "flex",
-        flexDirection: "column",
-    },
-    narrowField:{
-        margin: "7px 15px",
-        width: "235px"
     },
     textContainer: {
         maxWidth: "800px",
         margin: "auto",
         marginTop:"40px",
         marginBottom: "20px",
-    },
-
-    resultsCard: {
-        backgroundColor: "#b2dfdb59",
-        // color: "white",
-        color: theme.palette.primary.main,
-        padding: "30px 25px",
-        margin: "0 auto",
-        maxWidth: "850px",
-        display: "flex",
-        justifyContent: "center",
-        [theme.breakpoints.down('xs')]: {
-            padding: "30px 3px",
-        },
-        marginTop: "40px",
-        flexDirection: "column",
-    },
-
-    mandatoryField: {
-        backgroundColor: "white",
-        display: "flex",
-        flexDirection: "column",
-    },
-    successContainer: {
-        maxWidth: "650px",
-        margin: "30px auto"
     },
 })
 
@@ -103,7 +56,7 @@ class ViewRecords extends Component {
             articles: [],
             errors: {},
             loading: false,
-            showCheckboxes: false,
+            articleIndex: undefined,
             // checkedCheckboxes: {},
             checkedCheckboxes: new Set([]),
             action: "default",
@@ -192,6 +145,15 @@ class ViewRecords extends Component {
         this.setState({readyToSubmit: false})
     };
 
+    updateArticle = (index, article) => {
+        this.setState(({articles})=>{
+            articles[index] = article
+            return {
+                articles: articles
+            }
+        })
+    };
+
     getChosenArticles = () => {
         let chosenArticles = []
         let articleTypes = {}
@@ -213,39 +175,51 @@ class ViewRecords extends Component {
         return chosenArticles
     }
 
+    handleClick = (articleIndex, action) => {
+        console.log(`About to ${action} article at index ${articleIndex}`)
+        this.setState({
+            action: action,
+            articleIndex: articleIndex,
+            readyToSubmit: true,
+        })
+    }
+
+    removeArticle = (index) => {
+        console.log("removing article "+index)
+        let copy = [... this.state.articles]
+        copy.splice(index, 1);
+        this.setState({articles: copy})
+    }
+
     render(){
         const { classes } = this.props;
         return (
         <div>
             <Container color="primary" className={classes.textContainer}>
-                <Typography variant="h6">Records: </Typography>
+                <Typography variant="h6">View/Edit Records: </Typography>
             </Container>
 
-            <Dialog onEscapeKeyDown={this.handleClose} open={this.state.readyToSubmit}>
-                {this.state.action === "export" ?
-                    <ExportWindow data={this.getChosenArticles()} handleClose={()=>{this.handleClose()}}/> :
-                    <ShareWindow articles={this.getListChosenArticles()} handleClose={()=>{this.handleClose()}}/>
+            <Dialog maxWidth='lg' scroll="paper" onEscapeKeyDown={this.handleClose} open={this.state.readyToSubmit}>
+                {this.state.action === "delete" ?
+                    <DeleteRecordDialog removeArticle={(index)=>{this.removeArticle(index)}} articles={this.state.articles} articleIndex={this.state.articleIndex} handleClose={()=>{this.handleClose()}}/> :
+                    
+                    <EditRecordDialog 
+                        removeArticle={(index)=>{this.removeArticle(index)}}
+                        articles={this.state.articles} 
+                        articleNumber={this.state.articleIndex} 
+                        handleClose={()=>{this.handleClose()}}
+                        updateArticle={(index,article)=>{this.updateArticle(index,article)}}
+                    /> 
                 }
             </Dialog>
 
             <Paper elevation={7} className={classes.formCard}>
+                
                 <h2>{this.state.errorText}</h2>
-                <Typography variant="body1">
-                    Browse through your records, or choose between exporting or sharing them by clicking on the buttons below.
+                <Typography variant="h6">
+                    Browse through your records and edit or delete them.
                 </Typography>
                 {/* <Collapse in={!this.state.showCheckboxes} component="div"> */}
-                {this.state.articles !== [] && 
-                    <div>    
-                        <Button name="share" disabled={this.state.showCheckboxes} className={classes.submit_shareButtons} 
-                            onClick={()=>{this.showCheckboxes("share")}} color="primary" variant="contained">
-                            <ShareIcon/>  Share
-                        </Button>
-                        <Button name="export" disabled={this.state.showCheckboxes} className={classes.submit_shareButtons} 
-                            onClick={()=>{this.showCheckboxes("export")}} color="primary" variant="contained">
-                            <LaunchIcon/>  Export
-                        </Button>
-                    </div>  
-                }
                 <Collapse in={this.state.errorText !== ""}>
                     <Alert severity="error" action={
                         <IconButton size="small" onClick={() => {this.setState({errorText: ""});}}>
@@ -256,42 +230,27 @@ class ViewRecords extends Component {
                     {this.state.errorText}
                     </Alert>
                 </Collapse>
-
-                <Collapse in={this.state.showCheckboxes} component="div">
-                    <Typography variant="body1">
-                        Choose the records you would like to {this.state.action}.
-                    </Typography>  
-                    <Button className={classes.submit_shareButtons} color="primary" variant="outlined"
-                        onClick={()=>{this.setState({
-                            showCheckboxes: false,
-                            checkedCheckboxes: new Set([]),
-                            errorText: "",
-                    })}}>
-                        Cancel
-                    </Button>
-                    <Button className={classes.submit_shareButtons} onClick={()=>{this.submitChosenArticles()}} color="primary" variant="contained">{this.state.action}</Button>
-                </Collapse>
             {/* <div className={classes.articleContainer}> */}
                 {this.state.articles !== [] &&
                     this.state.articles.map((article, index) => {
                         return(
                             <div className={classes.articleContainer} key={index}>
                                 <ArticleCard name={"article_"+index} noStyle={true}
-                                    style={{maxWidth: "90%",}} key={index} article={{
+                                    style={{width: "100%",}} key={index} article={{
                                         title: article.title,
                                         authors: article.authors,
                                         year: article.year,
+                                        abstract: article.abstract,
                                         doi: article.metadata ? article.metadata.doi || article.metadata.DOI || null : null,
                                     }}
                                 />
-                                <Collapse in={this.state.showCheckboxes}>
-                                    <Checkbox onChange={(e)=>{this.toggleCheckbox(e, index)}}
-                                        checked={this.state.checkedCheckboxes.has(index)}
-                                        style={{height: "min-content"}}
-                                    />
-                                </Collapse>
-                            </div>
-                            
+                                <IconButton onClick={()=>{this.handleClick(index,"edit")}}>
+                                    <EditIcon fontSize="large" color="primary" />
+                                </IconButton>
+                                <IconButton onClick={()=>{this.handleClick(index,"delete")}}>
+                                    <DeleteIcon fontSize="large" color="primary" />
+                                </IconButton>
+                            </div>       
                         )
                     })
                 }

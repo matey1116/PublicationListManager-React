@@ -120,9 +120,13 @@ class ImportRecord extends Component {
                 stage: 1,
                 bibtex: this.state.bibtex,
             })
-            .then((res) => {                 
+            .then((res) => {      
+                console.log(res.data)           
                 if(res.data === "All articles from BiBTeX are already imported"){
-                    return this.setErrorMsg("bibtex", "All articles from BiBTeX are already imported")
+                    return this.setErrorMsg("bibtex", "All the articles provided have already been imported!")
+                }
+                if(res.status === 200 && res.data.length===0){
+                    return this.setErrorMsg("bibtex", "All the articles provided have already been imported!")
                 }
                 if(res.status === 200){
                     this.setState({
