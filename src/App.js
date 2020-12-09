@@ -13,6 +13,8 @@ import ImportRecord from "./pages/ImportRecord"
 import Records from "./pages/Records"
 import ViewRecords from "./pages/ViewRecords"
 import Profile from "./pages/Profile/Profile"
+import SharedLink from "./pages/SharedLink"
+import ManualImport from "./pages/ManualImport"
 
 import PrivateRoute from './PrivateRoute'
 import PublicRoute from './PublicRoute'
@@ -95,6 +97,7 @@ function App(props) {
                   <PrivateRoute exact path="/records" loggedIn={loggedIn} component={Records}/>
                   <PrivateRoute exact path="/records/view" loggedIn={loggedIn} component={ViewRecords}/>
                   <PrivateRoute exact path="/importRecord" loggedIn={loggedIn} component={ImportRecord}/>
+                  <PrivateRoute exact path="/records/import/manual" loggedIn={loggedIn} component={ManualImport}/>
 
                   <PublicRoute restricted={true} exact path='/login' loggedIn={loggedIn} component={routeProps => <Login {...routeProps} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
                   <PublicRoute restricted={false} exact path='/' component={home} />
@@ -103,6 +106,7 @@ function App(props) {
                   <PublicRoute restricted={true} exact path='/activateAccount/:id' component={Activate} />
                   {/* <PublicRoute restricted={false} exact path='/queryDBLP' loggedIn={loggedIn} component={QueryDBLP} /> */}
                   <PublicRoute restricted={false} exact path='/queryDBLP' loggedIn={loggedIn} component={routeProps => <QueryDBLP {...routeProps} loggedIn={loggedIn}/>} />
+                  <PublicRoute restricted={false} exact path='/share/:id' loggedIn={loggedIn} component={routeProps => <SharedLink {...routeProps} loggedIn={loggedIn}/>} />
 
 
                   {/* <Route exact path="/" component={home} /> */}

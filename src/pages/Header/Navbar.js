@@ -19,7 +19,8 @@ const loggedInNavLinks = [
   { title: `Profile`, path: `/profile` },
   { title: `Records`, path: `/records` },
   { title: `Import record`, path: `/importRecord` },
-  { title: `View / edit records`, path: `/records/view` }
+  { title: `View / edit records`, path: `/records/view` },
+  { title: `Manually add record`, path: `/records/import/manual` },
 ]
 const loggedOutNavLinks = [
   { title: `Home`, path: `/` },

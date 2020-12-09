@@ -236,9 +236,10 @@ class ImportRecord extends Component {
                         flexDirection: "column",
                     }}>
                         {/* <form onSubmit={this.handleSubmit}  className={classes.formField}> */}
-                            <Typography variant="body2">
+                            <Typography variant="h5">
                                 Paste your BibTeX text into the input field below.
                             </Typography>
+                            <Typography variant="body1">Fields "<strong>title</strong>", "<strong>year</strong>", and "<strong>authors</strong>" are mandatory for a successful BibTex parsing.</Typography>
                             <FormControl error={this.state.errors.bibtex ? true : false} className={classes.searchContainer}  >
                                 <TextareaAutosize rowsMin={3} name="bibtex" onChange={this.handleChange} value={this.state.bibtex} aria-label="empty textarea" 
                                     placeholder="BibTex" style={{borderColor: (this.state.errors.bibtex && "red"), maxWidth: "100%",}}/>
