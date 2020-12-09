@@ -208,7 +208,7 @@ class ImportRecord extends Component {
         var countdown = setInterval(()=>{
             if(this.state.timer < 1) {
                 clearInterval(countdown);
-                return this.props.history.push('/profile')
+                return this.props.history.push('/records/view')
             }
             this.setState((prevState)=>({
                 timer: prevState.timer-1,
@@ -274,7 +274,7 @@ class ImportRecord extends Component {
                     <Container className={classes.successContainer}>
                         <Alert variant="filled" severity="success">
                             <AlertTitle>Success!</AlertTitle>
-                            The BibTeX records have been successfully added! You will be redirected to the Profile page in <strong>{this.state.timer}</strong>
+                            The BibTeX records have been successfully added! You will be redirected to the Records page in <strong>{this.state.timer}</strong>
                         </Alert>
                     </Container>
                 }
