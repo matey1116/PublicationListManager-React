@@ -11,7 +11,7 @@ const Home = () => {
     }
     else console.log("no token")
     return (
-        "HI"
+        "Welcome to our Publication List Manager, you can register for an account or Login to an existing account using the buttons above."
     );
 }
 // const sendRequest = () => {
