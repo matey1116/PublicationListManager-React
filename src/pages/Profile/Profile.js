@@ -4,6 +4,7 @@ import axios from "axios";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
 import LogInProviders from './LogInProviders'
+import ChangePasswordDialog from './ChangePasswordDialog'
 import Toggle2FA from './Toggle2FA'
 import Disable2FA from './Disable2FA'
 
@@ -56,9 +57,10 @@ class Profile extends Component {
             errors: {},
             twoFAenabled: null,
             openBackdrop: false,
+            openChangePassword: false,
         };   
-        this.handleToggle = this.handleToggle.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.closeChangePassword = this.closeChangePassword.bind(this);
     }
 
     change2faEnabled = (boolean) => {
@@ -88,33 +90,33 @@ class Profile extends Component {
     }
 
     componentDidMount(){
-        axios
-            .get("http://localhost:8080/account/providers")
-            .then((res) => {
-                let providers = []
-                // console.log(res.data)
-                if (!res.data.Providers){
-                    // console.log("there are providers")
-                    for (const [providerName, providerURL] of Object.entries(res.data)) {
-                        console.log(`${providerName}:  ${providerURL}`);
-                        providers.push({
-                            providerName: providerName,
-                            providerURL: providerURL
-                        })
-                    }
-                    // console.log(providers)
-                    this.setState({
-                        providers: providers,
-                        // providers: [],
-                        loadingProviders: false
-                    });
-                    // console.log("loadingProvidres: "+this.state.loadingProviders )
-                }
-            })
-            .catch((err) => {
-                console.log(err)
-                console.log(err.response)
-            })
+        // axios
+        //     .get("http://localhost:8080/account/providers")
+        //     .then((res) => {
+        //         let providers = []
+        //         // console.log(res.data)
+        //         if (!res.data.Providers){
+        //             // console.log("there are providers")
+        //             for (const [providerName, providerURL] of Object.entries(res.data)) {
+        //                 console.log(`${providerName}:  ${providerURL}`);
+        //                 providers.push({
+        //                     providerName: providerName,
+        //                     providerURL: providerURL
+        //                 })
+        //             }
+        //             // console.log(providers)
+        //             this.setState({
+        //                 providers: providers,
+        //                 // providers: [],
+        //                 loadingProviders: false
+        //             });
+        //             // console.log("loadingProvidres: "+this.state.loadingProviders )
+        //         }
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //         console.log(err.response)
+        //     })
 
         axios
             .get("http://localhost:8080/account/is2FAenabled")
@@ -130,15 +132,12 @@ class Profile extends Component {
 
     handleClose(){
         this.setState({openBackdrop: false})
-        // setOpen(false);
     };
-    
-    handleToggle(){
-        this.setState((prevState)=>({
-            openBackdrop: !prevState.openBackdrop,
-        }))
-        // setOpen(!open);
-    };
+
+    closeChangePassword(){
+        this.setState({openChangePassword: false})
+    }
+
 
     render(){
         let tokenData = JSON.parse(atob(axios.defaults.headers.common["Authorization"].split('.')[1]));
@@ -150,21 +149,31 @@ class Profile extends Component {
             </Container>
             <Paper elevation={7} className={classes.formCard}>
                 <div className={classes.fieldsContainer}>
-                    
-                    {tokenData.firstName}<br/>
-                    {tokenData.lastName}<br/>
-                    {tokenData.sub}<br/>
+                    <Typography variant="h6">
+                        First name:&nbsp;&nbsp; {tokenData.firstName}<br/>
+                        Last name:&nbsp;&nbsp; {tokenData.lastName}<br/>
+                        E-mail:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {tokenData.sub}<br/>
+                    </Typography>
+
+                    <Button onClick={()=>{this.setState({openChangePassword: true})}} variant="outlined" color="primary" style={{marginTop:"7px"}}>
+                        Change password
+                    </Button>
+                    <Dialog scroll="paper" onEscapeKeyDown={()=>{this.closeChangePassword()}} className={classes.backdrop} open={this.state.openChangePassword}>
+                        <ChangePasswordDialog handleClose={this.closeChangePassword}/> 
+                    </Dialog>
+
                     <Collapse in={this.state.twoFAenabled !== null}>
+                        <br/>
                         <div style={{
                             display: "flex",
                             flexDirection: "row",
                             alignItems: 'center',}}>
-                                <Typography variant="body1">Two-Factor Authentication is {this.state.twoFAenabled ? "enabled" : "disabled"}</Typography>
-                                <Button onClick={this.handleToggle} variant="contained" color="primary" style={{marginLeft: "5%",}}>
+                                <Typography variant="h6">Two-Factor Authentication is {this.state.twoFAenabled ? "enabled" : "disabled"}</Typography>
+                                <Button onClick={()=>{this.setState({openBackdrop: true})}} variant="contained" color="primary" style={{marginLeft: "5%",}}>
                                     {this.state.twoFAenabled ? "Disable" : "Enable"} it
                                 </Button>
 
-                                <Dialog className={classes.backdrop} open={this.state.openBackdrop}>
+                                <Dialog scroll="paper" onEscapeKeyDown={this.handleClose} className={classes.backdrop} open={this.state.openBackdrop}>
                                     {this.state.twoFAenabled ?
                                         <Disable2FA handleClose={this.handleClose} change2faEnabled={this.change2faEnabled}/> :
                                         <Toggle2FA change2faEnabled={this.change2faEnabled} twoFAenabled={this.state.twoFAenabled} handleClose={this.handleClose}/> 
@@ -174,10 +183,10 @@ class Profile extends Component {
                         </div>
                     </Collapse>
 
-                    {this.state.loadingProviders ?
+                    {/* {this.state.loadingProviders ?
                         <h1>Loading providers...</h1> :
                         <LogInProviders providers={this.state.providers}/>
-                    }
+                    } */}
                     <br/>
                 </div>
             </Paper>

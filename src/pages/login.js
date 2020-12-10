@@ -141,8 +141,8 @@ export class Login extends Component {
                         sessionStorage.setItem("Authentication", `Bearer ${res.data.jwt}`);
                         axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.jwt}`;
                         console.log(res.data.jwt)
-                        this.props.setLoggedIn(true)
-                        return this.props.history.push('/')
+                        return this.props.setLoggedIn(true)
+                        // return this.props.history.push('/records/view')
                     }
                 })
                 .catch((err) => {

@@ -61,7 +61,7 @@ axios.interceptors.request.use(
         return Promise.reject(error);
     }
 );
-// const [loggedIn, setLoggedIn] = useState("ola maddame");
+
 function App(props) {
   const [loggedIn, setLoggedIn] = useState(()=>{
       if(axios.defaults.headers.common["Authorization"] === undefined) return false

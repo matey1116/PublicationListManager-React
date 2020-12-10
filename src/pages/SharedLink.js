@@ -1,8 +1,5 @@
 import React, {Component} from "react";
-import {Checkbox, Collapse, CircularProgress, FormLabel, 
-    FormControlLabel, RadioGroup, Radio, Button, Container, 
-    Typography, Paper, FormControl, TextField} from "@material-ui/core";
-import SearchIcon from '@material-ui/icons/Search';
+import {Checkbox, CircularProgress, Button, Container, Typography, Paper } from "@material-ui/core";
 import axios from "axios";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';

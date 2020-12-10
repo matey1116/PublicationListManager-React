@@ -69,7 +69,7 @@ export class ManualImport extends Component {
             article: {},
 
             title: "",
-            Abstract: "",
+            abstract: "",
             venue: "",
             volume: "",
             number: "",
@@ -314,7 +314,7 @@ export class ManualImport extends Component {
                     }
 
                     <Typography variant="h4">Optional fields:</Typography>
-                    <TextField label="Abstract" name="Abstract" onChange={this.handleChange} value={this.state.Abstract} className={classes.mandatoryField} multiline={true}/>
+                    <TextField label="Abstract" name="abstract" onChange={this.handleChange} value={this.state.abstract} className={classes.mandatoryField} multiline={true}/>
                     <TextField label="Venue" name="venue" onChange={this.handleChange} value={this.state.venue} className={classes.mandatoryField}/>
                     <TextField label="Volume" name="volume" onChange={this.handleChange} value={this.state.volume} className={classes.mandatoryField}/>
                     <TextField label="Number" name="number" onChange={this.handleChange} value={this.state.number} className={classes.mandatoryField}/>        
@@ -351,7 +351,7 @@ export class ManualImport extends Component {
                     </Button>
                 {/* </div> */}
                     {this.state.stage === 3 && 
-                        <Container className={classes.successContainer}>
+                        <Container>
                             <Alert variant="filled" severity="success">
                                 <AlertTitle>Success!</AlertTitle>
                                 The record has been successfully added! You will be redirected to the Records page in <strong>{this.state.timer}</strong>
