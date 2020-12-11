@@ -2,7 +2,7 @@ import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Home, KeyboardArrowUp } from "@material-ui/icons"
-import { Hidden, Button, Divider, AppBar, Toolbar, IconButton, Typography, Fab } from "@material-ui/core"
+import { Container, Hidden, Button, Divider, AppBar, Toolbar, IconButton, Typography, Fab } from "@material-ui/core"
 
 import HideOnScroll from "./HideOnScroll"
 import SideDrawer from "./SideDrawer"
@@ -15,16 +15,18 @@ import axios from 'axios';
 
 const loggedInNavLinks = [
   { title: `Home`, path: `/` },
-  { title: `Query DBLP`, path: `/queryDBLP` },
+  { title: `Search`, path: `/queryDBLP` },
   { title: `Profile`, path: `/profile` },
-  { title: `Records`, path: `/records` },
-  { title: `Import record`, path: `/importRecord` },
-  { title: `View / edit records`, path: `/records/view` },
-  { title: `Manually add record`, path: `/records/import/manual` },
 ]
 const loggedOutNavLinks = [
   { title: `Home`, path: `/` },
-  { title: `Query DBLP`, path: `/queryDBLP` },
+  { title: `Search`, path: `/queryDBLP` },
+]
+const dropdownLinks = [
+  { title: `View / edit`, path: `/records/view` },
+  { title: `Export / Share`, path: `/records/share` },
+  { title: `Import from BibTeX`, path: `/records/import/bibtex` },
+  { title: `Manually add`, path: `/records/import/manual` },
 ]
 const loggedOutLinks = [
   { title: `Log in`, path: `/login` },
@@ -64,15 +66,17 @@ const Navbar = (props) => {
     delete axios.defaults.headers.common["Authorization"];
     props.setLoggedIn(false)
   }
+
   const classes = useStyles();
   const xxsScreen = useMediaQuery('(max-width:390px)');
+
   return (
     <div>
     <HideOnScroll>
       <AppBar className={classes.appBar}  position="fixed" style={{
         // backgroundColor:"red"
         }} >
-        <Toolbar style={{display:"flex", justifyContent:"space-between"}} >
+        <Toolbar style={{display:"flex", flexDirection: "row", justifyContent:"space-between"}} >
           <div style={{
             maxWidth: "md", marginRight:"auto"
             // backgroundColor:"yellow",
@@ -94,26 +98,27 @@ const Navbar = (props) => {
               </Typography>             
             </IconButton>
           </div>
-          <Divider orientation="vertical" flexItem light/>
+          {/* <Divider orientation="vertical" flexItem light/> */}
           <Hidden mdDown>
             <div style={{
               //  backgroundColor: "blue",
                margin:" 0 auto",
               }}>
-              <MenuLinks navLinks={props.loggedIn ? loggedInNavLinks : loggedOutNavLinks} />
+              <MenuLinks loggedIn={props.loggedIn} navLinks={props.loggedIn ? loggedInNavLinks : loggedOutNavLinks} />            
             </div>
             <div>
               {props.loggedIn ? 
                 <Button component={Link} to='/' onClick={()=>{logOut()}} 
-                  className={classes.regLogButt} color="inherit">Log out
+                    className={classes.regLogButt} color="inherit">Log out
                 </Button>
               :
                 <MenuLinks navLinks={loggedOutLinks}/>
               }
             </div>
           </Hidden>
+          
           <Hidden lgUp>
-            <SideDrawer navLinks={props.loggedIn ? loggedInNavLinks : loggedOutNavLinks} loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn} logOut={logOut}/>
+            <SideDrawer navLinks={props.loggedIn ? loggedInNavLinks.concat(dropdownLinks) : loggedOutNavLinks} loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn} logOut={logOut}/>
           </Hidden>
         </Toolbar>
       </AppBar>

@@ -1,8 +1,10 @@
 import React, {Component} from "react";
-import {Checkbox, Collapse, CircularProgress, FormLabel, 
+import {InputLabel, Select, MenuItem, Checkbox, Collapse, CircularProgress, FormLabel, 
     FormControlLabel, RadioGroup, Radio, Button, Container, 
     Typography, Paper, FormControl, TextField} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import axios from "axios";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
@@ -75,6 +77,8 @@ class QueryDBLP extends Component {
             loading: false,
             checkedCheckboxes: new Set([]),
             showSuccess: false,
+            orderBy: "title",
+            asc_desc: "asc",
         };    
     }
 
@@ -191,8 +195,46 @@ class QueryDBLP extends Component {
         return chosenArticles
     }
 
+    orderArticlesBy = (event) => {
+        if(event){
+            const {name, value} = event.target
+            console.log("name, value: "+name+"  "+value)
+            this.setState({[name]: value});
+        }
+        this.setState(({articles, orderBy, asc_desc})=>{
+            // console.log("We want to order by: "+orderBy+" in "+asc_desc+" order")
+            articles.sort(this.compareValues(orderBy, asc_desc))
+            return {
+                articles: articles,
+            }
+        })  
+    } 
+
+    compareValues = (key, order = 'asc') => {
+        return function innerSort(a, b) {
+          if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+            // property doesn't exist on either object
+            return 0;
+          }
+          const varA = (typeof a[key] === 'string')
+            ? a[key].toUpperCase() : a[key];
+          const varB = (typeof b[key] === 'string')
+            ? b[key].toUpperCase() : b[key];
+          let comparison = 0;
+          if (varA > varB) {
+            comparison = 1;
+          } else if (varA < varB) {
+            comparison = -1;
+          }
+          return (
+            (order === 'desc') ? (comparison * -1) : comparison
+          );
+        };
+    }
+
     render(){
         const { classes } = this.props;
+        const orderByValues = ["title", "year",]
         return (
         <div>
             <Container color="primary" className={classes.textContainer}>
@@ -251,6 +293,35 @@ class QueryDBLP extends Component {
                         <Typography variant="h5" style={{marginBottom:"10px"}}>
                             If you wish to save any of the results, mark the checkbox next to the wanted record and click on the Save button.
                         </Typography>
+                    }
+
+                    {this.state.articles !== [] &&
+                        <FormControl style={{marginTop:"40px", marginLeft:"10px", display: "flex", flexDirection: "row",alignItems:"baseline"}}>
+                            <div>
+                                <InputLabel id="demo-simple-select-label">Order by:</InputLabel>
+                                <Select
+                                    style={{minWidth: "90px", marginRight:"5px",}}
+                                    name="orderBy"
+                                    value={this.state.orderBy}
+                                    onChange={this.orderArticlesBy}
+                                >
+                                    {orderByValues.map((name)=>(
+                                        <MenuItem key={`${name}`} value={name}>{name}</MenuItem>
+                                    ))}
+                                </Select>
+                            </div>
+                            {this.state.asc_desc === "asc" ? 
+                                <ArrowUpwardIcon name="asc_desc" value="desc" onClick={()=>{
+                                    this.setState({asc_desc: "desc"});
+                                    this.orderArticlesBy()}}
+                                />
+                                :
+                                <ArrowDownwardIcon name="asc_desc" value="asc" onClick={()=>{
+                                    this.setState({asc_desc: "asc"});
+                                    this.orderArticlesBy()}}
+                                />
+                            }
+                        </FormControl>
                     }
 
                     {this.state.articles !== [] &&

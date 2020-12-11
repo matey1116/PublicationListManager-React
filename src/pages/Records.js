@@ -199,6 +199,14 @@ class Records extends Component {
             chosenArticles.push(this.state.articles[articleIndex])
             let id = this.state.articles[articleIndex]._id
             articleTypes[id] = "article"
+            if(this.state.articles[articleIndex].type === "Conference and Workshop Papers"){
+                console.log("Type: "+this.state.articles[articleIndex].type)
+                articleTypes[id] = "inproceedings"
+            }
+            if(this.state.articles[articleIndex].type === "Informal Publications"){
+                console.log("Type: "+this.state.articles[articleIndex].type)
+                articleTypes[id] = "misc"
+            }
         });
         return {articles: chosenArticles, articleTypes: articleTypes}    
     }

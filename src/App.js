@@ -85,6 +85,7 @@ function App(props) {
                style={{
                   boxSizing: "border-box",
                   margin: "0 auto",
+                  marginBottom: "40px",
                   maxWidth: "md",
                   paddingTop: "30px",
                   minHeight: "80vh",
@@ -92,11 +93,9 @@ function App(props) {
             >
                <Switch>
                   <PrivateRoute exact path="/profile" loggedIn={loggedIn} component={Profile}/>
-
-                  {/* These 2 should be private */}
-                  <PrivateRoute exact path="/records" loggedIn={loggedIn} component={Records}/>
+                  <PrivateRoute exact path="/records/share" loggedIn={loggedIn} component={Records}/>
                   <PrivateRoute exact path="/records/view" loggedIn={loggedIn} component={ViewRecords}/>
-                  <PrivateRoute exact path="/importRecord" loggedIn={loggedIn} component={ImportRecord}/>
+                  <PrivateRoute exact path="/records/import/bibtex" loggedIn={loggedIn} component={ImportRecord}/>
                   <PrivateRoute exact path="/records/import/manual" loggedIn={loggedIn} component={ManualImport}/>
 
                   <PublicRoute restricted={true} exact path='/login' loggedIn={loggedIn} component={routeProps => <Login {...routeProps} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
@@ -107,18 +106,9 @@ function App(props) {
                   {/* <PublicRoute restricted={false} exact path='/queryDBLP' loggedIn={loggedIn} component={QueryDBLP} /> */}
                   <PublicRoute restricted={false} exact path='/queryDBLP' loggedIn={loggedIn} component={routeProps => <QueryDBLP {...routeProps} loggedIn={loggedIn}/>} />
                   <PublicRoute restricted={false} exact path='/share/:id' loggedIn={loggedIn} component={routeProps => <SharedLink {...routeProps} loggedIn={loggedIn}/>} />
-
-
-                  {/* <Route exact path="/" component={home} /> */}
-                  {/* <Route exact path='/login' render={routeProps => <Login {...routeProps} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} /> */}
-                  {/* <Route exact path="/2fa" component={TwoFactorLogin} /> */}
-                  {/* <Route exact path="/register" component={Register} /> */}
-                  {/* <Route exact path="/activateAccount/:id" component={Activate}/> */}
-                  {/* <Route exact path="/queryDBLP" component={QueryDBLP}/> */}
-                  {/* <Route exact path="/profile" component={Profile}/> */}
                </Switch>
             </Container>
-            <Footer/>
+            {/* <Footer/> */}
          </ThemeProvider>
       </Router>
    );
