@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {InputLabel, Select, MenuItem, Checkbox, Collapse, CircularProgress, FormLabel, 
+import {InputLabel, Select, MenuItem, Checkbox, Collapse, CircularProgress, FormLabel,
     FormControlLabel, RadioGroup, Radio, Button, Container, 
     Typography, Paper, FormControl, TextField} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
@@ -71,6 +71,8 @@ class QueryDBLP extends Component {
         this.state = {
             searchTerm: "",
             type: "author",
+            uuid: "",
+            abstracts: false,
             articles: [],
             collapseResults: true,
             errors: {},
@@ -79,6 +81,8 @@ class QueryDBLP extends Component {
             showSuccess: false,
             orderBy: "title",
             asc_desc: "asc",
+            progress: 50,
+            loadingType: "indeterminate",
         };    
     }
 
@@ -90,6 +94,13 @@ class QueryDBLP extends Component {
                 ...this.state.errors,
                 [event.target.name]: null,
             },
+        });
+    };
+
+    handleAbstractsChange = (event) => {
+        const {name, checked} = event.target
+        this.setState({
+            [name]: checked,
         });
     };
 
@@ -117,22 +128,36 @@ class QueryDBLP extends Component {
             },
             loading: true,
             collapseResults: false,
+            checkedCheckboxes: new Set([]),
         }))
         axios
             .post("http://localhost:8080/query/dblp", {
                 name: this.state.searchTerm,
                 type: this.state.type,
-                searchOwnRecord: false,
-                liveFetch: true,
+                abstracts: this.state.abstracts,
+                // searchOwnRecord: false,
+                // liveFetch: true,
             })
             .then((res) => {
                 if(res.status === 200){
-                    this.setState({
-                        articles: res.data.dblpArticles,
-                        loading: false,
-                    });
-                }
-                
+                    console.log(res.data)
+                    if(!this.state.abstracts){
+                        this.setState({
+                            articles: res.data.dblpArticles,
+                            loading: false,
+                        });
+                    }
+                    else{
+                        this.setState({
+                            uuid: res.data.uuid,
+                            progress: 0,
+                        })
+                        setTimeout(() => { 
+                            this.fetchArticles()
+                        }, 1000)
+                        
+                    }
+                } 
             })
             .catch((err) => {
                 if(err.response.data.publication === "No articles for the given title" || err.response.data.author === "No articles for the given author"){
@@ -147,8 +172,44 @@ class QueryDBLP extends Component {
             });
     }
 
+    fetchArticles = () => { 
+            let checkProgress = setInterval(() => { 
+                let errCounter = 0;
+                axios
+                    .get(`http://localhost:8080/query/status/${this.state.uuid}`)
+                    .then((res) => {
+                        if(res.status === 200){
+                            if(res.data.progress || res.data.progress === 0){
+                                this.setState({progress: res.data.progress})
+                            }
+                            if(res.data.response !== undefined && res.data.response.dblpArticles !== undefined){
+                                clearInterval(checkProgress)
+                                this.setState({
+                                    articles: res.data.response.dblpArticles,
+                                    loading: false,
+                                });
+                            }
+                        } 
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        console.log(err.response)
+                        if(!err.response || !err.response.data) return null
+                        if(err.response.data.uuid === "Not Found"){
+                            errCounter++;
+                            if(errCounter >= 11){
+                                this.setErrorMsg("searchResults", "Something went wrong! Please try again!")
+                                this.setState({loading: false})
+                                clearInterval(checkProgress)
+                            }     
+                        }
+                        
+                    });
+                    }, 1000); 
+    }
+
     toggleCheckbox = (event, index) => {
-        console.log(this.state.checkedCheckboxes)
+        // console.log(this.state.checkedCheckboxes)
         if(event.target.checked){
             return this.setState(({checkedCheckboxes}) => {
                 return {
@@ -258,6 +319,21 @@ class QueryDBLP extends Component {
                     <FormControlLabel value="publication" control={<Radio color="primary" />} label="Publication" />
                 </RadioGroup>
 
+                <Typography variant="body2">
+                    For many of the publications, abstracts can be fetched as well, but it prolongs the query time.
+                    It is recommended to fetch abstracts only in cases where not more than 50 articles are fetched. 
+                </Typography>
+
+                <FormControlLabel style={{marginRight: "auto"}} labelPlacement="start" 
+                    label="Fetch abstracts" control={
+                    <Checkbox
+                        checked={this.state.abstracts}
+                        onChange={this.handleAbstractsChange}
+                        name="abstracts"
+                        color="primary"
+                    />}
+                />
+
                 <FormControl error={this.state.errors.searchTerm ? true : false} className={classes.searchContainer}  >
                     <TextField
                         placeholder="Search…"
@@ -286,16 +362,16 @@ class QueryDBLP extends Component {
             <Collapse in={!this.state.collapseResults}>
                 <Paper elevation={4} className={classes.resultsCard}>
                     {this.state.loading && 
-                        <CircularProgress style={{margin: "auto",}}/>
+                        <CircularProgress value={this.state.progress} variant="determinate" style={{margin: "auto",}}/>
                     }
-
+                    {/* <CircularProgress value={this.state.progress} variant='determinate' style={{margin: "auto",}}/> */}
                     {this.state.articles.length > 0 && !this.state.loading && this.props.loggedIn &&
                         <Typography variant="h5" style={{marginBottom:"10px"}}>
                             If you wish to save any of the results, mark the checkbox next to the wanted record and click on the Save button.
                         </Typography>
                     }
-
-                    {this.state.articles !== [] &&
+                    
+                    {this.state.articles.length !== 0 &&
                         <FormControl style={{marginTop:"40px", marginLeft:"10px", display: "flex", flexDirection: "row",alignItems:"baseline"}}>
                             <div>
                                 <InputLabel id="demo-simple-select-label">Order by:</InputLabel>
