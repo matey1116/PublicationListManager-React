@@ -362,7 +362,7 @@ class QueryDBLP extends Component {
             <Collapse in={!this.state.collapseResults}>
                 <Paper elevation={4} className={classes.resultsCard}>
                     {this.state.loading && 
-                        <CircularProgress value={this.state.progress} variant="determinate" style={{margin: "auto",}}/>
+                        <CircularProgress value={this.state.progress} variant="static" style={{margin: "auto",}}/>
                     }
                     {/* <CircularProgress value={this.state.progress} variant='determinate' style={{margin: "auto",}}/> */}
                     {this.state.articles.length > 0 && !this.state.loading && this.props.loggedIn &&
