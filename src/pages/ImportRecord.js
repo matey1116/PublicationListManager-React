@@ -150,43 +150,65 @@ class ImportRecord extends Component {
             });
     }
     
-    stage2handleSubmit = (article) => {
-        console.log("\n\n\n\n\nsubmitting the form 2")
+    updateState = (article) => {
         this.setState((prevState)=>{
-            prevState.article = article
-            prevState.articles[this.state.showArticle] = article
+            prevState.articles[prevState.showArticle] = article
             return { 
                 articles: prevState.articles,
                 article: article,
                 loading: true,
             }
         })
-        console.log("About to submit articles:")
-        console.log(this.state.articles)
+    }
 
-        axios
-            .post("http://localhost:8080/article/import", {
-                stage: 2,
-                editedImportDataList: this.state.articles,
-            })
-            .then((res) => {                 
-                console.log("Response:")
-                console.log(res.data)    
-                console.log(res)    
-                this.setState({
-                    loading: false,
-                })  
-                this.showSuccess()   
-            })
-            .catch((err) => {
-                console.log("ERR:")
-                console.table(err)
-                console.info(err.response)
-                this.setState({
-                    loading: false,
+    stage2handleSubmit = (article)=>{
+        console.log("BEFORE")
+        this.setState((prevState)=>{
+            prevState.articles[prevState.showArticle] = article
+            console.log("IN")
+            return { 
+                articles: prevState.articles,
+                article: article,
+                loading: true,
+            }
+        },()=>{
+            axios
+                .post("http://localhost:8080/article/import", {
+                    stage: 2,
+                    editedImportDataList: this.state.articles,
                 })
-            });
-    
+                .then((res) => {
+                    console.log("this.state.articles:")
+                    console.log(this.state.articles)   
+
+                    console.log("res.data:")
+                    console.log(res.data)    
+                    // console.log(res)    
+                    this.setState({
+                        loading: false,
+                    })  
+                    this.showSuccess()   
+                })
+                .catch((err) => {
+                    console.log("ERR:")
+                    console.table(err)
+                    console.info(err.response)
+                    this.setState({
+                        loading: false,
+                    })
+                });
+        })
+        
+        // console.log("AFTER")
+        console.log("\n\n\n\n\nsubmitting the form 2")
+        // console.log("stateeeeeeeeeeeeeee:")
+        // console.log(await state)
+        // console.log("article argument:")
+        // console.log(article)
+        // console.log("About to submit articles:")
+        // console.log(this.state.articles)
+
+        
     }
 
 
