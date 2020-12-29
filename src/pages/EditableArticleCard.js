@@ -52,6 +52,7 @@ export class EditableArticleCard extends Component {
             title: props.article.title || "",
             year: props.article.year || "",
             url: props.article.url || "",
+            doi: props.article.doi || "",
             authors: props.article.authors || [],
             metadata: Object.entries(props.article.metadata) || [],
             mandatoryFieldError: "",
@@ -194,6 +195,7 @@ export class EditableArticleCard extends Component {
             title: this.state.title,
             year: this.state.year,
             url: this.state.url,
+            doi: this.state.doi,
             authors: this.state.authors,
             metadata: metadata,
         }
@@ -217,6 +219,10 @@ export class EditableArticleCard extends Component {
             this.setState({mandatoryFieldError: "URL field cannot be left empty!"})
             return false
         }
+        if(this.state.doi === ""){
+            this.setState({mandatoryFieldError: "DOI field cannot be left empty!"})
+            return false
+        }
         if(this.state.authors.some(author => author==="")){
             this.setState({mandatoryFieldError: "Author fields cannot be left empty!"})
             return false
@@ -237,6 +243,7 @@ export class EditableArticleCard extends Component {
                 <TextField label="Title" name="title" onChange={this.handleChange} value={this.state.title} className={classes.mandatoryField}/>
                 <TextField label="Year" name="year" onChange={this.handleChange} value={this.state.year} className={classes.mandatoryField}/>
                 <TextField label="URL" name="url"  onChange={this.handleChange} value={this.state.url} className={classes.mandatoryField}/>
+                <TextField label="DOI" name="doi"  onChange={this.handleChange} value={this.state.doi} className={classes.mandatoryField}/>
                 {this.state.authors ? 
                     <div>
                         {this.renderAuthors()}

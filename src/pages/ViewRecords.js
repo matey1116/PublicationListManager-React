@@ -276,9 +276,14 @@ class ViewRecords extends Component {
                     {this.state.errorText}
                     </Alert>
                 </Collapse>
+                
+                {this.state.articles.length === 0 &&
+                    <Typography color="secondary" variant="h4">
+                        There are no records saved to your account!
+                    </Typography>
+                }
 
-
-                {this.state.articles !== [] &&
+                {this.state.articles.length !== 0 &&
                     <FormControl style={{marginTop:"40px", marginLeft:"10px", display: "flex", flexDirection: "row",alignItems:"baseline"}}>
                         <div>
                             <InputLabel id="demo-simple-select-label">Order by:</InputLabel>
