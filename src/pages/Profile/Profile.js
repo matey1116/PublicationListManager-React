@@ -162,7 +162,7 @@ class Profile extends Component {
                         <ChangePasswordDialog handleClose={this.closeChangePassword}/> 
                     </Dialog>
 
-                    <Collapse in={this.state.twoFAenabled !== null}>
+                    {/* <Collapse in={this.state.twoFAenabled !== null}>
                         <br/>
                         <div style={{
                             display: "flex",
@@ -181,7 +181,7 @@ class Profile extends Component {
                                 </Dialog>
 
                         </div>
-                    </Collapse>
+                    </Collapse> */}
 
                     {/* {this.state.loadingProviders ?
                         <h1>Loading providers...</h1> :
